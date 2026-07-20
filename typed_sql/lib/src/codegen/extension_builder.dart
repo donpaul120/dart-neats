@@ -593,6 +593,22 @@ Iterable<Spec> _buildQueryExtension(int i) sync* {
             ..lambda = true
             ..body = Code('await stream().toList()'),
         ),
+
+        Method(
+          (b) => b
+            ..name = 'watch'
+            ..documentation(docs.watchQuery)
+            ..returns = refer(
+              'Stream<List<${i == 1 ? typeArg[0] : '(${typeArg.take(i).join(',')})'}>>',
+            )
+            ..lambda = true
+            ..body = Code('''
+            _context._watch(
+              _tablesReadBy(_from(_expressions.toList())),
+              fetch,
+            )
+          '''),
+        ),
       ]),
   );
 }
@@ -705,6 +721,17 @@ Iterable<Spec> _buildOrderedQueryExtensions(int i) sync* {
       ..body = Code('_query.stream()'),
   );
 
+  Method watch() => Method(
+    (b) => b
+      ..name = 'watch'
+      ..documentation(docs.watchQuery)
+      ..returns = refer(
+        'Stream<List<${i == 1 ? typeArg[0] : '(${typeArg.take(i).join(',')})'}>>',
+      )
+      ..lambda = true
+      ..body = Code('_query.watch()'),
+  );
+
   Method first() => Method(
     (b) => b
       ..name = 'first'
@@ -732,6 +759,7 @@ Iterable<Spec> _buildOrderedQueryExtensions(int i) sync* {
         orderBy('OrderedQuery', 'OrderedQuery'),
         fetch(),
         stream(),
+        watch(),
         first(),
       ]),
   );
@@ -752,6 +780,7 @@ Iterable<Spec> _buildOrderedQueryExtensions(int i) sync* {
         orderBy('OrderedQueryRange', 'OrderedQuery'),
         fetch(),
         stream(),
+        watch(),
         first(),
       ]),
   );
@@ -771,6 +800,7 @@ Iterable<Spec> _buildOrderedQueryExtensions(int i) sync* {
         orderBy('ProjectedOrderedQuery', 'OrderedQuery'),
         fetch(),
         stream(),
+        watch(),
         first(),
       ]),
   );
@@ -790,6 +820,7 @@ Iterable<Spec> _buildOrderedQueryExtensions(int i) sync* {
         orderBy('ProjectedOrderedQueryRange', 'OrderedQuery'),
         fetch(),
         stream(),
+        watch(),
         first(),
       ]),
   );
@@ -1146,6 +1177,18 @@ Spec _buildSingleQueryExtension(int i) {
               ..lambda = true
               ..body = Code('(await asQuery.fetch()).firstOrNull'),
           ),
+          Method(
+            (b) => b
+              ..name = 'watch'
+              ..documentation(docs.watchQuerySingle)
+              ..returns = refer(
+                'Stream<${i == 1 ? typeArg[0] : '(${typeArg.take(i).join(',')})'}?>',
+              )
+              ..lambda = true
+              ..body = Code(
+                'asQuery.watch().map((rows) => rows.firstOrNull)',
+              ),
+          ),
           if (i > 1)
             Method(
               (b) => b
@@ -1209,8 +1252,12 @@ Iterable<Spec> _buildReturnExtension(int i) sync* {
             ..modifier = MethodModifier.asyncStar
             ..body = Code('''
             final task = _render(_expressions.toList());
-            await for (final r in _context._query(task)) {
-              yield ${i == 1 ? '_expressions.\$1._decode(r) as ${typeArg[0]}' : '(${List.generate(i, (i) => '_expressions.\$${i + 1}._decode(r) as ${typeArg[i]}').join(',')})'};
+            try {
+              await for (final r in _context._query(task)) {
+                yield ${i == 1 ? '_expressions.\$1._decode(r) as ${typeArg[0]}' : '(${List.generate(i, (i) => '_expressions.\$${i + 1}._decode(r) as ${typeArg[i]}').join(',')})'};
+              }
+            } finally {
+              _context._notifyChanged(_affectedTables);
             }
           '''),
         ),

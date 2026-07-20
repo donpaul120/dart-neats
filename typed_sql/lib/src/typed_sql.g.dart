@@ -271,6 +271,25 @@ extension Query1<A> on Query<(Expr<A>,)> {
 
   /// Query the database for rows in this [Query] as a [List].
   Future<List<A>> fetch() async => await stream().toList();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<A>> watch() =>
+      _context._watch(_tablesReadBy(_from(_expressions.toList())), fetch);
 }
 
 /// Extension methods for a subquery returning zero or more rows with
@@ -454,6 +473,24 @@ extension OrderedQuery1<A> on OrderedQuery<(Expr<A>,)> {
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<A> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<A>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -522,6 +559,24 @@ extension OrderedQueryRange1<A> on OrderedQueryRange<(Expr<A>,)> {
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<A> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<A>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -576,6 +631,24 @@ extension ProjectedOrderedQuery1<A> on ProjectedOrderedQuery<(Expr<A>,)> {
 
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<A> stream() => _query.stream();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<A>> watch() => _query.watch();
 
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
@@ -632,6 +705,24 @@ extension ProjectedOrderedQueryRange1<A>
 
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<A> stream() => _query.stream();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<A>> watch() => _query.watch();
 
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
@@ -1137,6 +1228,25 @@ extension Query2<A, B> on Query<(Expr<A>, Expr<B>)> {
 
   /// Query the database for rows in this [Query] as a [List].
   Future<List<(A, B)>> fetch() async => await stream().toList();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B)>> watch() =>
+      _context._watch(_tablesReadBy(_from(_expressions.toList())), fetch);
 }
 
 /// Extension methods for a subquery returning zero or more rows with
@@ -1324,6 +1434,24 @@ extension OrderedQuery2<A, B> on OrderedQuery<(Expr<A>, Expr<B>)> {
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -1392,6 +1520,24 @@ extension OrderedQueryRange2<A, B> on OrderedQueryRange<(Expr<A>, Expr<B>)> {
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -1448,6 +1594,24 @@ extension ProjectedOrderedQuery2<A, B>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -1503,6 +1667,24 @@ extension ProjectedOrderedQueryRange2<A, B>
 
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B)> stream() => _query.stream();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B)>> watch() => _query.watch();
 
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
@@ -2026,6 +2208,25 @@ extension Query3<A, B, C> on Query<(Expr<A>, Expr<B>, Expr<C>)> {
 
   /// Query the database for rows in this [Query] as a [List].
   Future<List<(A, B, C)>> fetch() async => await stream().toList();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C)>> watch() =>
+      _context._watch(_tablesReadBy(_from(_expressions.toList())), fetch);
 }
 
 /// Extension methods for a subquery returning zero or more rows with
@@ -2217,6 +2418,24 @@ extension OrderedQuery3<A, B, C> on OrderedQuery<(Expr<A>, Expr<B>, Expr<C>)> {
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -2287,6 +2506,24 @@ extension OrderedQueryRange3<A, B, C>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -2344,6 +2581,24 @@ extension ProjectedOrderedQuery3<A, B, C>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -2400,6 +2655,24 @@ extension ProjectedOrderedQueryRange3<A, B, C>
 
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C)> stream() => _query.stream();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C)>> watch() => _query.watch();
 
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
@@ -2950,6 +3223,25 @@ extension Query4<A, B, C, D> on Query<(Expr<A>, Expr<B>, Expr<C>, Expr<D>)> {
 
   /// Query the database for rows in this [Query] as a [List].
   Future<List<(A, B, C, D)>> fetch() async => await stream().toList();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D)>> watch() =>
+      _context._watch(_tablesReadBy(_from(_expressions.toList())), fetch);
 }
 
 /// Extension methods for a subquery returning zero or more rows with
@@ -3159,6 +3451,24 @@ extension OrderedQuery4<A, B, C, D>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -3234,6 +3544,24 @@ extension OrderedQueryRange4<A, B, C, D>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -3298,6 +3626,24 @@ extension ProjectedOrderedQuery4<A, B, C, D>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -3361,6 +3707,24 @@ extension ProjectedOrderedQueryRange4<A, B, C, D>
 
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D)> stream() => _query.stream();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D)>> watch() => _query.watch();
 
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
@@ -3947,6 +4311,25 @@ extension Query5<A, B, C, D, E>
 
   /// Query the database for rows in this [Query] as a [List].
   Future<List<(A, B, C, D, E)>> fetch() async => await stream().toList();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E)>> watch() =>
+      _context._watch(_tablesReadBy(_from(_expressions.toList())), fetch);
 }
 
 /// Extension methods for a subquery returning zero or more rows with
@@ -4164,6 +4547,24 @@ extension OrderedQuery5<A, B, C, D, E>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -4244,6 +4645,24 @@ extension OrderedQueryRange5<A, B, C, D, E>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -4307,6 +4726,24 @@ extension ProjectedOrderedQuery5<A, B, C, D, E>
 
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E)> stream() => _query.stream();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E)>> watch() => _query.watch();
 
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
@@ -4374,6 +4811,24 @@ extension ProjectedOrderedQueryRange5<A, B, C, D, E>
 
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E)> stream() => _query.stream();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E)>> watch() => _query.watch();
 
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
@@ -4989,6 +5444,25 @@ extension Query6<A, B, C, D, E, F>
 
   /// Query the database for rows in this [Query] as a [List].
   Future<List<(A, B, C, D, E, F)>> fetch() async => await stream().toList();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E, F)>> watch() =>
+      _context._watch(_tablesReadBy(_from(_expressions.toList())), fetch);
 }
 
 /// Extension methods for a subquery returning zero or more rows with
@@ -5226,6 +5700,24 @@ extension OrderedQuery6<A, B, C, D, E, F>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E, F)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E, F)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -5308,6 +5800,24 @@ extension OrderedQueryRange6<A, B, C, D, E, F>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E, F)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E, F)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -5380,6 +5890,24 @@ extension ProjectedOrderedQuery6<A, B, C, D, E, F>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E, F)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E, F)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -5451,6 +5979,24 @@ extension ProjectedOrderedQueryRange6<A, B, C, D, E, F>
 
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E, F)> stream() => _query.stream();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E, F)>> watch() => _query.watch();
 
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
@@ -6140,6 +6686,25 @@ extension Query7<A, B, C, D, E, F, G>
 
   /// Query the database for rows in this [Query] as a [List].
   Future<List<(A, B, C, D, E, F, G)>> fetch() async => await stream().toList();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E, F, G)>> watch() =>
+      _context._watch(_tablesReadBy(_from(_expressions.toList())), fetch);
 }
 
 /// Extension methods for a subquery returning zero or more rows with
@@ -6423,6 +6988,24 @@ extension OrderedQuery7<A, B, C, D, E, F, G>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E, F, G)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E, F, G)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -6519,6 +7102,24 @@ extension OrderedQueryRange7<A, B, C, D, E, F, G>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E, F, G)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E, F, G)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -6593,6 +7194,24 @@ extension ProjectedOrderedQuery7<A, B, C, D, E, F, G>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E, F, G)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E, F, G)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -6666,6 +7285,24 @@ extension ProjectedOrderedQueryRange7<A, B, C, D, E, F, G>
 
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E, F, G)> stream() => _query.stream();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E, F, G)>> watch() => _query.watch();
 
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
@@ -7484,6 +8121,25 @@ extension Query8<A, B, C, D, E, F, G, H>
   /// Query the database for rows in this [Query] as a [List].
   Future<List<(A, B, C, D, E, F, G, H)>> fetch() async =>
       await stream().toList();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E, F, G, H)>> watch() =>
+      _context._watch(_tablesReadBy(_from(_expressions.toList())), fetch);
 }
 
 /// Extension methods for a subquery returning zero or more rows with
@@ -7804,6 +8460,24 @@ extension OrderedQuery8<A, B, C, D, E, F, G, H>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E, F, G, H)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E, F, G, H)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -7915,6 +8589,24 @@ extension OrderedQueryRange8<A, B, C, D, E, F, G, H>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E, F, G, H)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E, F, G, H)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -8003,6 +8695,24 @@ extension ProjectedOrderedQuery8<A, B, C, D, E, F, G, H>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E, F, G, H)> stream() => _query.stream();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E, F, G, H)>> watch() => _query.watch();
+
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
   /// This returns a [QuerySingle] which contains at-most one row.
@@ -8090,6 +8800,24 @@ extension ProjectedOrderedQueryRange8<A, B, C, D, E, F, G, H>
 
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E, F, G, H)> stream() => _query.stream();
+
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<(A, B, C, D, E, F, G, H)>> watch() => _query.watch();
 
   /// Limit [Query] to the first row using `LIMIT` clause.
   ///
@@ -16227,6 +16955,24 @@ extension QuerySingle1<A> on QuerySingle<(Expr<A>,)> {
   /// This returns at-most a single row because [QuerySingle] represents a [Query]
   /// containing at-most one row.
   Future<A?> fetch() async => (await asQuery.fetch()).firstOrNull;
+
+  /// Watch this [QuerySingle], returning a [Stream] that emits the row
+  /// matching this [QuerySingle], or `null`, whenever it may have changed.
+  ///
+  /// An initial value is emitted as soon as possible. After that, a new value
+  /// is emitted every time a table read by this [QuerySingle] is written to
+  /// using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<A?> watch() => asQuery.watch().map((rows) => rows.firstOrNull);
 }
 
 /// Extensions for a query returning at-most one row with
@@ -16272,6 +17018,24 @@ extension QuerySingle2<A, B> on QuerySingle<(Expr<A>, Expr<B>)> {
   /// > If you don't care about whether or not the row is `null` or not
   /// > present, you can use the convinience method [fetchOrNulls] instead.
   Future<(A, B)?> fetch() async => (await asQuery.fetch()).firstOrNull;
+
+  /// Watch this [QuerySingle], returning a [Stream] that emits the row
+  /// matching this [QuerySingle], or `null`, whenever it may have changed.
+  ///
+  /// An initial value is emitted as soon as possible. After that, a new value
+  /// is emitted every time a table read by this [QuerySingle] is written to
+  /// using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<(A, B)?> watch() => asQuery.watch().map((rows) => rows.firstOrNull);
 
   /// Query the database for the row matching this [QuerySingle], if any.
   ///
@@ -16324,6 +17088,24 @@ extension QuerySingle3<A, B, C> on QuerySingle<(Expr<A>, Expr<B>, Expr<C>)> {
   /// > If you don't care about whether or not the row is `null` or not
   /// > present, you can use the convinience method [fetchOrNulls] instead.
   Future<(A, B, C)?> fetch() async => (await asQuery.fetch()).firstOrNull;
+
+  /// Watch this [QuerySingle], returning a [Stream] that emits the row
+  /// matching this [QuerySingle], or `null`, whenever it may have changed.
+  ///
+  /// An initial value is emitted as soon as possible. After that, a new value
+  /// is emitted every time a table read by this [QuerySingle] is written to
+  /// using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<(A, B, C)?> watch() => asQuery.watch().map((rows) => rows.firstOrNull);
 
   /// Query the database for the row matching this [QuerySingle], if any.
   ///
@@ -16380,6 +17162,25 @@ extension QuerySingle4<A, B, C, D>
   /// > present, you can use the convinience method [fetchOrNulls] instead.
   Future<(A, B, C, D)?> fetch() async => (await asQuery.fetch()).firstOrNull;
 
+  /// Watch this [QuerySingle], returning a [Stream] that emits the row
+  /// matching this [QuerySingle], or `null`, whenever it may have changed.
+  ///
+  /// An initial value is emitted as soon as possible. After that, a new value
+  /// is emitted every time a table read by this [QuerySingle] is written to
+  /// using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<(A, B, C, D)?> watch() =>
+      asQuery.watch().map((rows) => rows.firstOrNull);
+
   /// Query the database for the row matching this [QuerySingle], if any.
   ///
   /// > [!WARNING]
@@ -16435,6 +17236,25 @@ extension QuerySingle5<A, B, C, D, E>
   /// > If you don't care about whether or not the row is `null` or not
   /// > present, you can use the convinience method [fetchOrNulls] instead.
   Future<(A, B, C, D, E)?> fetch() async => (await asQuery.fetch()).firstOrNull;
+
+  /// Watch this [QuerySingle], returning a [Stream] that emits the row
+  /// matching this [QuerySingle], or `null`, whenever it may have changed.
+  ///
+  /// An initial value is emitted as soon as possible. After that, a new value
+  /// is emitted every time a table read by this [QuerySingle] is written to
+  /// using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<(A, B, C, D, E)?> watch() =>
+      asQuery.watch().map((rows) => rows.firstOrNull);
 
   /// Query the database for the row matching this [QuerySingle], if any.
   ///
@@ -16500,6 +17320,25 @@ extension QuerySingle6<A, B, C, D, E, F>
   /// > present, you can use the convinience method [fetchOrNulls] instead.
   Future<(A, B, C, D, E, F)?> fetch() async =>
       (await asQuery.fetch()).firstOrNull;
+
+  /// Watch this [QuerySingle], returning a [Stream] that emits the row
+  /// matching this [QuerySingle], or `null`, whenever it may have changed.
+  ///
+  /// An initial value is emitted as soon as possible. After that, a new value
+  /// is emitted every time a table read by this [QuerySingle] is written to
+  /// using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<(A, B, C, D, E, F)?> watch() =>
+      asQuery.watch().map((rows) => rows.firstOrNull);
 
   /// Query the database for the row matching this [QuerySingle], if any.
   ///
@@ -16578,6 +17417,25 @@ extension QuerySingle7<A, B, C, D, E, F, G>
   /// > present, you can use the convinience method [fetchOrNulls] instead.
   Future<(A, B, C, D, E, F, G)?> fetch() async =>
       (await asQuery.fetch()).firstOrNull;
+
+  /// Watch this [QuerySingle], returning a [Stream] that emits the row
+  /// matching this [QuerySingle], or `null`, whenever it may have changed.
+  ///
+  /// An initial value is emitted as soon as possible. After that, a new value
+  /// is emitted every time a table read by this [QuerySingle] is written to
+  /// using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<(A, B, C, D, E, F, G)?> watch() =>
+      asQuery.watch().map((rows) => rows.firstOrNull);
 
   /// Query the database for the row matching this [QuerySingle], if any.
   ///
@@ -16672,6 +17530,25 @@ extension QuerySingle8<A, B, C, D, E, F, G, H>
   Future<(A, B, C, D, E, F, G, H)?> fetch() async =>
       (await asQuery.fetch()).firstOrNull;
 
+  /// Watch this [QuerySingle], returning a [Stream] that emits the row
+  /// matching this [QuerySingle], or `null`, whenever it may have changed.
+  ///
+  /// An initial value is emitted as soon as possible. After that, a new value
+  /// is emitted every time a table read by this [QuerySingle] is written to
+  /// using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<(A, B, C, D, E, F, G, H)?> watch() =>
+      asQuery.watch().map((rows) => rows.firstOrNull);
+
   /// Query the database for the row matching this [QuerySingle], if any.
   ///
   /// > [!WARNING]
@@ -16687,8 +17564,12 @@ extension Return1<A> on Return<(Expr<A>,)> {
   /// Execute this statement and return the output as a [Stream].
   Stream<A> executeAndStream() async* {
     final task = _render(_expressions.toList());
-    await for (final r in _context._query(task)) {
-      yield _expressions.$1._decode(r) as A;
+    try {
+      await for (final r in _context._query(task)) {
+        yield _expressions.$1._decode(r) as A;
+      }
+    } finally {
+      _context._notifyChanged(_affectedTables);
     }
   }
 
@@ -16717,8 +17598,15 @@ extension Return2<A, B> on Return<(Expr<A>, Expr<B>)> {
   /// Execute this statement and return the output as a [Stream].
   Stream<(A, B)> executeAndStream() async* {
     final task = _render(_expressions.toList());
-    await for (final r in _context._query(task)) {
-      yield (_expressions.$1._decode(r) as A, _expressions.$2._decode(r) as B);
+    try {
+      await for (final r in _context._query(task)) {
+        yield (
+          _expressions.$1._decode(r) as A,
+          _expressions.$2._decode(r) as B,
+        );
+      }
+    } finally {
+      _context._notifyChanged(_affectedTables);
     }
   }
 
@@ -16753,12 +17641,16 @@ extension Return3<A, B, C> on Return<(Expr<A>, Expr<B>, Expr<C>)> {
   /// Execute this statement and return the output as a [Stream].
   Stream<(A, B, C)> executeAndStream() async* {
     final task = _render(_expressions.toList());
-    await for (final r in _context._query(task)) {
-      yield (
-        _expressions.$1._decode(r) as A,
-        _expressions.$2._decode(r) as B,
-        _expressions.$3._decode(r) as C,
-      );
+    try {
+      await for (final r in _context._query(task)) {
+        yield (
+          _expressions.$1._decode(r) as A,
+          _expressions.$2._decode(r) as B,
+          _expressions.$3._decode(r) as C,
+        );
+      }
+    } finally {
+      _context._notifyChanged(_affectedTables);
     }
   }
 
@@ -16793,13 +17685,17 @@ extension Return4<A, B, C, D> on Return<(Expr<A>, Expr<B>, Expr<C>, Expr<D>)> {
   /// Execute this statement and return the output as a [Stream].
   Stream<(A, B, C, D)> executeAndStream() async* {
     final task = _render(_expressions.toList());
-    await for (final r in _context._query(task)) {
-      yield (
-        _expressions.$1._decode(r) as A,
-        _expressions.$2._decode(r) as B,
-        _expressions.$3._decode(r) as C,
-        _expressions.$4._decode(r) as D,
-      );
+    try {
+      await for (final r in _context._query(task)) {
+        yield (
+          _expressions.$1._decode(r) as A,
+          _expressions.$2._decode(r) as B,
+          _expressions.$3._decode(r) as C,
+          _expressions.$4._decode(r) as D,
+        );
+      }
+    } finally {
+      _context._notifyChanged(_affectedTables);
     }
   }
 
@@ -16837,14 +17733,18 @@ extension Return5<A, B, C, D, E>
   /// Execute this statement and return the output as a [Stream].
   Stream<(A, B, C, D, E)> executeAndStream() async* {
     final task = _render(_expressions.toList());
-    await for (final r in _context._query(task)) {
-      yield (
-        _expressions.$1._decode(r) as A,
-        _expressions.$2._decode(r) as B,
-        _expressions.$3._decode(r) as C,
-        _expressions.$4._decode(r) as D,
-        _expressions.$5._decode(r) as E,
-      );
+    try {
+      await for (final r in _context._query(task)) {
+        yield (
+          _expressions.$1._decode(r) as A,
+          _expressions.$2._decode(r) as B,
+          _expressions.$3._decode(r) as C,
+          _expressions.$4._decode(r) as D,
+          _expressions.$5._decode(r) as E,
+        );
+      }
+    } finally {
+      _context._notifyChanged(_affectedTables);
     }
   }
 
@@ -16882,15 +17782,19 @@ extension Return6<A, B, C, D, E, F>
   /// Execute this statement and return the output as a [Stream].
   Stream<(A, B, C, D, E, F)> executeAndStream() async* {
     final task = _render(_expressions.toList());
-    await for (final r in _context._query(task)) {
-      yield (
-        _expressions.$1._decode(r) as A,
-        _expressions.$2._decode(r) as B,
-        _expressions.$3._decode(r) as C,
-        _expressions.$4._decode(r) as D,
-        _expressions.$5._decode(r) as E,
-        _expressions.$6._decode(r) as F,
-      );
+    try {
+      await for (final r in _context._query(task)) {
+        yield (
+          _expressions.$1._decode(r) as A,
+          _expressions.$2._decode(r) as B,
+          _expressions.$3._decode(r) as C,
+          _expressions.$4._decode(r) as D,
+          _expressions.$5._decode(r) as E,
+          _expressions.$6._decode(r) as F,
+        );
+      }
+    } finally {
+      _context._notifyChanged(_affectedTables);
     }
   }
 
@@ -16928,16 +17832,20 @@ extension Return7<A, B, C, D, E, F, G>
   /// Execute this statement and return the output as a [Stream].
   Stream<(A, B, C, D, E, F, G)> executeAndStream() async* {
     final task = _render(_expressions.toList());
-    await for (final r in _context._query(task)) {
-      yield (
-        _expressions.$1._decode(r) as A,
-        _expressions.$2._decode(r) as B,
-        _expressions.$3._decode(r) as C,
-        _expressions.$4._decode(r) as D,
-        _expressions.$5._decode(r) as E,
-        _expressions.$6._decode(r) as F,
-        _expressions.$7._decode(r) as G,
-      );
+    try {
+      await for (final r in _context._query(task)) {
+        yield (
+          _expressions.$1._decode(r) as A,
+          _expressions.$2._decode(r) as B,
+          _expressions.$3._decode(r) as C,
+          _expressions.$4._decode(r) as D,
+          _expressions.$5._decode(r) as E,
+          _expressions.$6._decode(r) as F,
+          _expressions.$7._decode(r) as G,
+        );
+      }
+    } finally {
+      _context._notifyChanged(_affectedTables);
     }
   }
 
@@ -16993,17 +17901,21 @@ extension Return8<A, B, C, D, E, F, G, H>
   /// Execute this statement and return the output as a [Stream].
   Stream<(A, B, C, D, E, F, G, H)> executeAndStream() async* {
     final task = _render(_expressions.toList());
-    await for (final r in _context._query(task)) {
-      yield (
-        _expressions.$1._decode(r) as A,
-        _expressions.$2._decode(r) as B,
-        _expressions.$3._decode(r) as C,
-        _expressions.$4._decode(r) as D,
-        _expressions.$5._decode(r) as E,
-        _expressions.$6._decode(r) as F,
-        _expressions.$7._decode(r) as G,
-        _expressions.$8._decode(r) as H,
-      );
+    try {
+      await for (final r in _context._query(task)) {
+        yield (
+          _expressions.$1._decode(r) as A,
+          _expressions.$2._decode(r) as B,
+          _expressions.$3._decode(r) as C,
+          _expressions.$4._decode(r) as D,
+          _expressions.$5._decode(r) as E,
+          _expressions.$6._decode(r) as F,
+          _expressions.$7._decode(r) as G,
+          _expressions.$8._decode(r) as H,
+        );
+      }
+    } finally {
+      _context._notifyChanged(_affectedTables);
     }
   }
 

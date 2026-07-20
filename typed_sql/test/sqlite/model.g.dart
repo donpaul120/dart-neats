@@ -1692,6 +1692,26 @@ extension QueryOwnerPackageNamed<A, B>
   /// Query the database for rows in this [Query] as a [List].
   Future<List<({A owner, B package})>> fetch() async => await stream().toList();
 
+  /// Watch this [Query], returning a [Stream] that emits the rows matching
+  /// this [Query] whenever they may have changed.
+  ///
+  /// An initial [List] of rows is emitted as soon as possible. After that, a
+  /// new [List] is emitted every time a table read by this [Query] is written
+  /// to using this same [Database].
+  ///
+  /// > [!NOTE]
+  /// > Changes made through a different [Database] instance, a different
+  /// > process, or using raw SQL, will not be observed.
+  ///
+  /// > [!NOTE]
+  /// > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+  /// > still in-flight may occasionally fail with a transient
+  /// > "database is locked" error, since the adapter does not currently use
+  /// > `WAL` mode. Consider retrying such writes.
+  Stream<List<({A owner, B package})>> watch() => _asPositionalQuery
+      .watch()
+      .map((rows) => rows.map((e) => (owner: e.$1, package: e.$2)).toList());
+
   /// Offset [Query] using `OFFSET` clause.
   ///
   /// The resulting [Query] will skip the first [offset] rows.

@@ -199,12 +199,52 @@ final fetchQuery = '''
     Query the database for rows in this [Query] as a [List].
 ''';
 
+/// Documentation for `.watch` on [Query] with positional and named records.
+final watchQuery = '''
+    Watch this [Query], returning a [Stream] that emits the rows matching
+    this [Query] whenever they may have changed.
+
+    An initial [List] of rows is emitted as soon as possible. After that, a
+    new [List] is emitted every time a table read by this [Query] is written
+    to using this same [Database].
+
+    > [!NOTE]
+    > Changes made through a different [Database] instance, a different
+    > process, or using raw SQL, will not be observed.
+
+    > [!NOTE]
+    > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+    > still in-flight may occasionally fail with a transient
+    > "database is locked" error, since the adapter does not currently use
+    > `WAL` mode. Consider retrying such writes.
+''';
+
 /// Documentation for `.fetch` on [QuerySingle].
 final fetchQuerySingle = '''
     Query the database for the row matching this [QuerySingle], if any.
 
     This returns at-most a single row because [QuerySingle] represents a [Query]
     containing at-most one row.
+''';
+
+/// Documentation for `.watch` on [QuerySingle].
+final watchQuerySingle = '''
+    Watch this [QuerySingle], returning a [Stream] that emits the row
+    matching this [QuerySingle], or `null`, whenever it may have changed.
+
+    An initial value is emitted as soon as possible. After that, a new value
+    is emitted every time a table read by this [QuerySingle] is written to
+    using this same [Database].
+
+    > [!NOTE]
+    > Changes made through a different [Database] instance, a different
+    > process, or using raw SQL, will not be observed.
+
+    > [!NOTE]
+    > On SQLite, a write made while a re-fetch triggered by `.watch()` is
+    > still in-flight may occasionally fail with a transient
+    > "database is locked" error, since the adapter does not currently use
+    > `WAL` mode. Consider retrying such writes.
 ''';
 
 /// Documentation for `.fetch` on [QuerySingle] when `.fetchOrNulls` is also

@@ -85,6 +85,7 @@ final class Update<T extends Row> {
         null,
       ),
     ),
+    {_table.tableName},
   );
 
   /// Create a `UPDATE` statement that returns a projection of the updated rows,
@@ -104,20 +105,25 @@ final class Update<T extends Row> {
 
     final table = TableClause._(_table);
 
-    return Return._(_query._context, projection, (e) {
-      return _query._context._dialect.update(
-        UpdateStatement._(
-          table,
-          table.columns
-              .whereIndexed((index, value) => _set._values[index] != null)
-              .toList(),
-          _set._values.nonNulls.toList(),
-          _handle,
-          _query._from(_query._expressions.toList()),
-          ReturningClause._(handle, table.columns, e),
-        ),
-      );
-    });
+    return Return._(
+      _query._context,
+      projection,
+      (e) {
+        return _query._context._dialect.update(
+          UpdateStatement._(
+            table,
+            table.columns
+                .whereIndexed((index, value) => _set._values[index] != null)
+                .toList(),
+            _set._values.nonNulls.toList(),
+            _handle,
+            _query._from(_query._expressions.toList()),
+            ReturningClause._(handle, table.columns, e),
+          ),
+        );
+      },
+      {_table.tableName},
+    );
   }
 
   /// Create a `UPDATE` statement that returns the updated rows, using the
@@ -167,7 +173,10 @@ final class Insert<T extends Row> {
   ) => InsertOnConflict._(this, conflictTarget);
 
   /// Execute this `INSERT` statement in the database.
-  Future<void> execute() async => await _table._context._execute(_render());
+  Future<void> execute() async => await _table._context._execute(
+    _render(),
+    {_table._tableClause.name},
+  );
 
   /// Create a `INSERT` statement that returns a projection of the inserted
   /// rows, using the `RETURNING` clause.
@@ -190,6 +199,7 @@ final class Insert<T extends Row> {
       (e) => _render(
         returning: ReturningClause._(handle, _table._tableClause.columns, e),
       ),
+      {_table._tableClause.name},
     );
   }
 
@@ -728,6 +738,7 @@ final class Delete<T extends Row> {
         null,
       ),
     ),
+    {_table.tableName},
   );
 
   /// Create a `DELETE` statement that returns a projection of the deleted rows,
@@ -747,15 +758,20 @@ final class Delete<T extends Row> {
 
     final table = TableClause._(_table);
 
-    return Return._(_query._context, projection, (e) {
-      return _query._context._dialect.delete(
-        DeleteStatement._(
-          table,
-          _query._from(_query._expressions.toList()),
-          ReturningClause._(handle, table.columns, e),
-        ),
-      );
-    });
+    return Return._(
+      _query._context,
+      projection,
+      (e) {
+        return _query._context._dialect.delete(
+          DeleteStatement._(
+            table,
+            _query._from(_query._expressions.toList()),
+            ReturningClause._(handle, table.columns, e),
+          ),
+        );
+      },
+      {_table.tableName},
+    );
   }
 
   /// Create a `DELETE` statement that returns the deleted rows, using the
@@ -829,8 +845,14 @@ final class Return<T extends Record> {
   final Database _context;
   final SqlTask Function(List<Expr> e) _render;
   final T _expressions;
+  final Set<String> _affectedTables;
 
-  Return._(this._context, this._expressions, this._render);
+  Return._(
+    this._context,
+    this._expressions,
+    this._render,
+    this._affectedTables,
+  );
 
   /// Internal method to represent this as a [ReturnSingle].
   ///

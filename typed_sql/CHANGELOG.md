@@ -1,3 +1,8 @@
+## 0.1.14
+ * Introduce `.watch()` on `Query`, `QuerySingle` and related query types,
+   returning a `Stream` that re-emits whenever a table read by the query is
+   written to through the same `Database`.
+
 ## 0.1.13
  * Support `CREATE INDEX` DDLs through `@Index` annotations.
 
