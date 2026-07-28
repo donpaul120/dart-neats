@@ -1562,20 +1562,6 @@ Iterable<Spec> buildRecord(ParsedRecord record) sync* {
       ..methods.add(
         Method(
           (b) => b
-            ..name = 'watch'
-            ..documentation(docs.watchQuery)
-            ..returns = refer('Stream<List<${record.returnType}>>')
-            ..lambda = true
-            ..body = Code('''
-            _asPositionalQuery.watch().map((rows) => rows.map((e) => (${record.fields.mapIndexed(
-              (i, f) => '$f: e.\$${i + 1}',
-            ).join(', ')},)).toList())
-          '''),
-        ),
-      )
-      ..methods.add(
-        Method(
-          (b) => b
             ..name = 'offset'
             ..documentation(docs.offset('Query'))
             ..returns = namedQueryType

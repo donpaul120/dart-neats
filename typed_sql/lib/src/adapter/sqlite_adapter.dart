@@ -47,9 +47,9 @@ final class _SqliteDatabaseAdapter extends DatabaseAdapter {
     conn.execute('PRAGMA foreign_keys = ON');
     // Without a busy_timeout, a connection that hits a lock held by another
     // connection in this pool fails immediately with "database is locked"
-    // instead of retrying. This matters more now that `.watch()` issues
-    // background re-fetches that can legitimately overlap with writes made
-    // through a different pooled connection.
+    // instead of retrying. This matters more now that `Database.watch()`
+    // issues background re-fetches that can legitimately overlap with
+    // writes made through a different pooled connection.
     conn.execute('PRAGMA busy_timeout = 5000');
     return conn;
   }

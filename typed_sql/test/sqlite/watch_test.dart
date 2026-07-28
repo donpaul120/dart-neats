@@ -22,8 +22,8 @@ import 'package:typed_sql/typed_sql.dart';
 import 'model.dart';
 
 /// Wait for the next event on [queue], returning `true` if none arrives
-/// within a short timeout. Used to assert that a `.watch()` stream did NOT
-/// re-emit after an unrelated write.
+/// within a short timeout. Used to assert that a `db.watch()` stream did
+/// NOT re-emit after an unrelated write.
 Future<bool> _timesOutWaitingForNext(StreamQueue queue) async {
   try {
     await queue.next.timeout(const Duration(milliseconds: 300));
@@ -70,15 +70,15 @@ void main() {
     await adapter.close(force: true);
   });
 
-  test('.watch() emits an initial snapshot', () async {
-    final queue = StreamQueue(db.packages.watch());
+  test('db.watch() emits an initial snapshot', () async {
+    final queue = StreamQueue(db.watch(() => db.packages.fetch()));
     final initial = await queue.next;
     check(initial).length.equals(2);
     await queue.cancel(immediate: true);
   });
 
-  test('.watch() re-emits after an insert into a watched table', () async {
-    final queue = StreamQueue(db.packages.watch());
+  test('db.watch() re-emits after an insert into a watched table', () async {
+    final queue = StreamQueue(db.watch(() => db.packages.fetch()));
     check(await queue.next).length.equals(2);
 
     await db.packages
@@ -90,14 +90,14 @@ void main() {
   });
 
   test(
-    '.watch() does not re-emit after a write to an unrelated table',
+    'db.watch() does not re-emit after a write to an unrelated table',
     () async {
-      final queue = StreamQueue(db.packages.watch());
+      final queue = StreamQueue(db.watch(() => db.packages.fetch()));
       check(await queue.next).length.equals(2);
 
-      // `packages` has a foreign key to `users`, but a plain `db.packages`
-      // query never reads from `users`, so writes to `users` must not
-      // trigger a re-fetch.
+      // `packages` has a foreign key to `users`, but a plain
+      // `db.packages.fetch()` callback never reads from `users`, so writes
+      // to `users` must not trigger a re-fetch.
       await db.users
           .insert(
             userId: toExpr(2),
@@ -111,12 +111,14 @@ void main() {
     },
   );
 
-  test('.watch() on a join re-emits on writes to either table', () async {
+  test('db.watch() over a join re-emits on writes to either table', () async {
     final queue = StreamQueue(
-      db.users
-          .join(db.packages)
-          .on((u, p) => u.userId.equals(p.ownerId))
-          .watch(),
+      db.watch(
+        () => db.users
+            .join(db.packages)
+            .on((u, p) => u.userId.equals(p.ownerId))
+            .fetch(),
+      ),
     );
     check(await queue.next).length.equals(2);
 
@@ -139,8 +141,11 @@ void main() {
     await queue.cancel(immediate: true);
   });
 
-  test('QuerySingle.watch() emits null, then the row once it exists', () async {
-    final queue = StreamQueue(db.packages.byKey('new-pkg').watch());
+  test('db.watch() over a QuerySingle emits null, then the row once it exists',
+      () async {
+    final queue = StreamQueue(
+      db.watch(() => db.packages.byKey('new-pkg').fetch()),
+    );
     check(await queue.next).isNull();
 
     await db.packages
@@ -153,8 +158,9 @@ void main() {
     await queue.cancel(immediate: true);
   });
 
-  test('.watch() batches writes inside transact() into one emission', () async {
-    final queue = StreamQueue(db.packages.watch());
+  test('db.watch() batches writes inside transact() into one emission',
+      () async {
+    final queue = StreamQueue(db.watch(() => db.packages.fetch()));
     check(await queue.next).length.equals(2);
 
     await db.transact(() async {
@@ -172,8 +178,41 @@ void main() {
     await queue.cancel(immediate: true);
   });
 
-  test('.watch() does not emit for a rolled back transaction', () async {
-    final queue = StreamQueue(db.packages.watch());
+  test(
+    'db.watch(() => db.transact(...)) composes: the fetch callback runs '
+    'atomically, and still reacts to writes on tables it read',
+    () async {
+      final queue = StreamQueue(
+        db.watch(
+          () => db.transact(() async {
+            final users = await db.users.fetch();
+            final packages = await db.packages.fetch();
+            return (users.length, packages.length);
+          }),
+        ),
+      );
+      check(await queue.next).equals((1, 2));
+
+      await db.packages
+          .insert(packageName: toExpr('baz'), ownerId: toExpr(1))
+          .execute();
+      check(await queue.next).equals((1, 3));
+
+      await db.users
+          .insert(
+            userId: toExpr(2),
+            name: toExpr('Bob'),
+            email: toExpr('bob@example.com'),
+          )
+          .execute();
+      check(await queue.next).equals((2, 3));
+
+      await queue.cancel(immediate: true);
+    },
+  );
+
+  test('db.watch() does not emit for a rolled back transaction', () async {
+    final queue = StreamQueue(db.watch(() => db.packages.fetch()));
     check(await queue.next).length.equals(2);
 
     try {
@@ -194,8 +233,9 @@ void main() {
     await queue.cancel(immediate: true);
   });
 
-  test('.watch() gives each listener its own fresh initial snapshot', () async {
-    final stream = db.packages.watch();
+  test('db.watch() gives each listener its own fresh initial snapshot',
+      () async {
+    final stream = db.watch(() => db.packages.fetch());
 
     final q1 = StreamQueue(stream);
     check(await q1.next).length.equals(2);
@@ -215,9 +255,9 @@ void main() {
   });
 
   test(
-    'cancelling a .watch() subscription does not break later writes',
+    'cancelling a db.watch() subscription does not break later writes',
     () async {
-      final sub = db.packages.watch().listen((_) {});
+      final sub = db.watch(() => db.packages.fetch()).listen((_) {});
       await sub.cancel();
 
       // Give the cancelled subscription's own in-flight initial fetch a
@@ -225,7 +265,7 @@ void main() {
       // adapter's rollback-journal locking (no WAL mode) can occasionally
       // surface a transient "database is locked" here — a pre-existing
       // adapter characteristic when a multi-row read and a write overlap,
-      // not something `.watch()` can fully paper over by itself.
+      // not something `db.watch()` can fully paper over by itself.
       await Future<void>.delayed(const Duration(milliseconds: 50));
 
       await db.packages
@@ -234,6 +274,116 @@ void main() {
 
       final result = await db.packages.byKey('after-cancel').fetch();
       check(result).isNotNull();
+    },
+  );
+
+  test(
+    'db.watch() tracks all tables read by concurrent Future.wait-style '
+    'reads inside one callback, not just sequentially-awaited ones',
+    () async {
+      final queue = StreamQueue(
+        db.watch(() async {
+          // Mirrors a record-`.wait` pattern: several reads launched
+          // synchronously, before any of them is awaited.
+          final (users, packages) = await (
+            db.users.fetch(),
+            db.packages.fetch(),
+          ).wait;
+          return (users.length, packages.length);
+        }),
+      );
+      check(await queue.next).equals((1, 2));
+
+      // A write to `users` — only reachable through the concurrently
+      // launched `db.users.fetch()` call — must still trigger a re-fetch.
+      // If Zone propagation into concurrently-launched (not sequentially
+      // awaited) futures were broken, this table would never be tracked
+      // and this write would be silently missed.
+      await db.users
+          .insert(
+            userId: toExpr(2),
+            name: toExpr('Bob'),
+            email: toExpr('bob@example.com'),
+          )
+          .execute();
+      check(await queue.next).equals((2, 2));
+
+      await queue.cancel(immediate: true);
+    },
+  );
+
+  test(
+    'db.watch() rediscovers its table set on every run: a table only '
+    'touched starting on a later run still becomes reactive',
+    () async {
+      // First run reads only `packages`. Once `readLikes` flips true, later
+      // runs also read `likes` — a table untouched by the very first run.
+      var readLikes = false;
+      final queue = StreamQueue(
+        db.watch(() async {
+          final packages = await db.packages.fetch();
+          final likes = readLikes ? await db.likes.fetch() : const <Like>[];
+          return (packages.length, likes.length);
+        }),
+      );
+      check(await queue.next).equals((2, 0));
+
+      // Write to `likes` while it's still untracked (the first run never
+      // read it, so this write alone wouldn't trigger a re-fetch).
+      await db.likes
+          .insert(userId: toExpr(1), packageName: toExpr('foo'))
+          .execute();
+
+      // Flip the flag and force a re-run via a write to a table that's
+      // already tracked (`packages`). This re-run reads `likes` for the
+      // first time — its result reflects the current DB state (so it
+      // already includes the untracked write above, since `fetch` doesn't
+      // care when tracking started, only what the table currently holds)
+      // and makes `likes` reactive going forward.
+      readLikes = true;
+      await db.packages
+          .insert(packageName: toExpr('baz'), ownerId: toExpr(1))
+          .execute();
+      check(await queue.next).equals((3, 1));
+
+      // Now that `likes` has been read once, further writes to it are
+      // correctly reactive.
+      await db.likes
+          .insert(userId: toExpr(1), packageName: toExpr('bar'))
+          .execute();
+      check(await queue.next).equals((3, 2));
+
+      await queue.cancel(immediate: true);
+    },
+  );
+
+  test(
+    'db.watch() may run fetch one extra, harmless time if a write lands '
+    'during the very first (table-set-discovering) run — documented, not a bug',
+    () async {
+      // A `packages` write is issued as soon as the stream is listened to,
+      // racing the first `fetch()` call. Before the first run completes,
+      // `db.watch()` doesn't yet know its table set, so it conservatively
+      // treats *any* write as relevant — which can cause one extra,
+      // otherwise-redundant follow-up fetch. This is expected, coalescing
+      // behavior (favor a redundant refetch over a missed update), not
+      // something a future change should "optimize away" into a bug.
+      final events = <int>[];
+      final sub = db.watch(() => db.packages.fetch()).listen(
+            (rows) => events.add(rows.length),
+          );
+
+      await db.packages
+          .insert(packageName: toExpr('racing-insert'), ownerId: toExpr(1))
+          .execute();
+
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      await sub.cancel();
+
+      // Whether or not the race triggered an extra fetch, the *last*
+      // emission must always reflect the final, correct state.
+      check(events).isNotEmpty();
+      check(events.last).equals(3);
     },
   );
 }

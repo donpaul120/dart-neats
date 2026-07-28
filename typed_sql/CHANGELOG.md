@@ -1,7 +1,15 @@
 ## 0.1.14
- * Introduce `.watch()` on `Query`, `QuerySingle` and related query types,
-   returning a `Stream` that re-emits whenever a table read by the query is
-   written to through the same `Database`.
+ * Introduce `Database.watch<R>(FutureOr<R> Function() fetch)`, returning a
+   `Stream` that re-emits whenever a write touches a table `fetch` read on
+   its most recent run. The watched tables are discovered dynamically —
+   rediscovered on every run, not fixed up front — so `fetch` can perform
+   any number of reads, in any control flow, without manually naming
+   tables. Not automatically transactional; wrap `fetch` in `db.transact()`
+   yourself when multiple reads need to be mutually consistent.
+ * Removed the per-query `.watch()` on `Query`/`QuerySingle`/related types
+   — superseded by `Database.watch()`, which covers the single-query case
+   too (`db.watch(() => query.fetch())`) without the redundant "watch
+   fetches data just to detect a change" coupling the per-query version had.
 
 ## 0.1.13
  * Support `CREATE INDEX` DDLs through `@Index` annotations.
