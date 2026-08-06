@@ -231,20 +231,29 @@ extension ExpressionNullable<T> on Expr<T?> {
   /// > current expression to a non-nullable expression and does not cause an
   /// > error if the assertion is violated.
   Expr<T> asNotNull() => NotNullExpression._(this);
-}
 
-/// Extension methods for nullable [int] and [double] expressions.
-extension ExpressionNullableNum<T extends num> on Expr<T?> {
   /// {@template orElse}
   /// If this expression is `NULL`, use [value] instead.
   ///
   /// This is equivalent to `COALESCE(this, value)`.
+  ///
+  /// Works for any `T`, including [CustomDataType] columns — `COALESCE`
+  /// operates on the underlying encoded SQL value, so this needs no
+  /// type-specific handling.
+  ///
+  /// > [!NOTE]
+  /// > For [JsonValue], this only triggers when `this` is a true SQL `NULL`
+  /// > — if `this` is `JsonValue(null)` (a JSON null, not a missing value),
+  /// > that is what's returned, not [value].
   /// {@endtemplate}
   Expr<T> orElse(Expr<T> value) => OrElseExpression._(this, value);
 
   /// {@macro orElse}
   Expr<T> orElseValue(T value) => orElse(toExpr(value));
+}
 
+/// Extension methods for nullable [int] and [double] expressions.
+extension ExpressionNullableNum<T extends num> on Expr<T?> {
   /// {@macro equals}
   Expr<bool?> equals(Expr<T> other) => ExpressionEquals(this, other);
 
@@ -288,12 +297,6 @@ extension ExpressionNullableNum<T extends num> on Expr<T?> {
 
 /// Extension methods for nullable [String] expressions.
 extension ExpressionNullableString on Expr<String?> {
-  /// {@macro orElse}
-  Expr<String> orElse(Expr<String> value) => OrElseExpression._(this, value);
-
-  /// {@macro orElse}
-  Expr<String> orElseValue(String value) => orElse(toExpr(value));
-
   /// {@macro equals}
   Expr<bool?> equals(Expr<String> other) => ExpressionEquals(this, other);
 
@@ -317,12 +320,6 @@ extension ExpressionNullableString on Expr<String?> {
 
 /// Extension methods for nullable [bool] expressions.
 extension ExpressionNullableBool on Expr<bool?> {
-  /// {@macro orElse}
-  Expr<bool> orElse(Expr<bool> value) => OrElseExpression._(this, value);
-
-  /// {@macro orElse}
-  Expr<bool> orElseValue(bool value) => orElse(toExpr(value));
-
   /// {@macro equals}
   Expr<bool?> equals(Expr<bool> other) => ExpressionEquals(this, other);
 
@@ -406,13 +403,6 @@ extension ExpressionNullableBool on Expr<bool?> {
 
 /// Extension methods for nullable [DateTime] expressions.
 extension ExpressionNullableDateTime on Expr<DateTime?> {
-  /// {@macro orElse}
-  Expr<DateTime> orElse(Expr<DateTime> value) =>
-      OrElseExpression._(this, value);
-
-  /// {@macro orElse}
-  Expr<DateTime> orElseValue(DateTime value) => orElse(toExpr(value));
-
   /// {@macro equals}
   Expr<bool?> equals(Expr<DateTime> other) => ExpressionEquals(this, other);
 
@@ -436,13 +426,6 @@ extension ExpressionNullableDateTime on Expr<DateTime?> {
 
 /// Extension methods for nullable [Uint8List] expressions.
 extension ExpressionNullableUint8List on Expr<Uint8List?> {
-  /// {@macro orElse}
-  Expr<Uint8List> orElse(Expr<Uint8List> value) =>
-      OrElseExpression._(this, value);
-
-  /// {@macro orElse}
-  Expr<Uint8List> orElseValue(Uint8List value) => orElse(toExpr(value));
-
   /// {@macro equals}
   Expr<bool?> equals(Expr<Uint8List> other) => ExpressionEquals(this, other);
 
@@ -466,21 +449,6 @@ extension ExpressionNullableUint8List on Expr<Uint8List?> {
 
 /// Extension methods for nullable [JsonValue] expressions.
 extension ExpressionNullableJsonValue on Expr<JsonValue?> {
-  /// {@macro orElse}
-  /// {@template orElse-not-json-null}
-  ///
-  /// > [!IMPORTANT]
-  /// > This method only returns the _orElse [value]_, if `this` is an
-  /// > SQL `NULL`.
-  /// > If `this` is an `JsonValue(null)`, then `this` will be returned.
-  /// {@endtemplate}
-  Expr<JsonValue> orElse(Expr<JsonValue> value) =>
-      OrElseExpression._(this, value);
-
-  /// {@macro orElse}
-  /// {@macro orElse-not-json-null}
-  Expr<JsonValue> orElseValue(JsonValue value) => orElse(toExpr(value));
-
   /// {@macro isNull}
   ///
   /// > [!IMPORTANT]

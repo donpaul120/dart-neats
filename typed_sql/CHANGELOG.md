@@ -1,3 +1,14 @@
+## 0.1.15
+ * `.orElse()`/`.orElseValue()` on nullable expressions moved from six
+   per-type extensions (`String?`, `bool?`, `num?`, `DateTime?`,
+   `Uint8List?`, `JsonValue?`) onto the generic `ExpressionNullable<T>`
+   extension — now also works for `Expr<CustomDataType<S>?>` columns,
+   e.g. `excluded.myCustomColumn.orElse(row.myCustomColumn.asNotNull())`
+   in an `onConflict().update()` clause. `COALESCE` operates on the
+   underlying encoded SQL value regardless of `T`, so this needed no new
+   type-specific codegen — purely deduplicating six identical
+   implementations into one.
+
 ## 0.1.14
  * Introduce `Database.watch<R>(FutureOr<R> Function() fetch)`, returning a
    `Stream` that re-emits whenever a write touches a table `fetch` read on
