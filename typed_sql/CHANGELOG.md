@@ -1,3 +1,6 @@
+## 0.1.16
+ * Republished to moniepub; no code changes from 0.1.15.
+
 ## 0.1.15
  * `.orElse()`/`.orElseValue()` on nullable expressions moved from six
    per-type extensions (`String?`, `bool?`, `num?`, `DateTime?`,
