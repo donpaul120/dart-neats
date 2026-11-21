@@ -1,8 +1,36 @@
+## 0.1.17
+ * Merged google/dart-neats master, which brings upstream 0.1.14:
+   * Support `upsertValue` as a shortcut to `insertValue` + `onConflict` + `update`.
+   * Support `upsert` as a shortcut to `insert` + `onConflict` + `update`.
+   * Added `unixSocket` option to `DatabaseAdapter.postgresTestDatabase`, allowing
+     a _relative path_ to be used when connecting over a unix socket.
+
+## 0.1.16
+ * Republished to moniepub; no code changes from 0.1.15.
+
+## 0.1.15
+ * `.orElse()`/`.orElseValue()` on nullable expressions moved from six
+   per-type extensions (`String?`, `bool?`, `num?`, `DateTime?`,
+   `Uint8List?`, `JsonValue?`) onto the generic `ExpressionNullable<T>`
+   extension — now also works for `Expr<CustomDataType<S>?>` columns,
+   e.g. `excluded.myCustomColumn.orElse(row.myCustomColumn.asNotNull())`
+   in an `onConflict().update()` clause. `COALESCE` operates on the
+   underlying encoded SQL value regardless of `T`, so this needed no new
+   type-specific codegen — purely deduplicating six identical
+   implementations into one.
+
 ## 0.1.14
- * Support `upsertValue` as a shortcut to `insertValue` + `onConflict` + `update`.
- * Support `upsert` as a shortcut to `insert` + `onConflict` + `update`.
- * Added `unixSocket` option to `DatabaseAdapter.postgresTestDatabase`, allowing
-   a _relative path_ to be used when connecting over a unix socket.
+ * Introduce `Database.watch<R>(FutureOr<R> Function() fetch)`, returning a
+   `Stream` that re-emits whenever a write touches a table `fetch` read on
+   its most recent run. The watched tables are discovered dynamically —
+   rediscovered on every run, not fixed up front — so `fetch` can perform
+   any number of reads, in any control flow, without manually naming
+   tables. Not automatically transactional; wrap `fetch` in `db.transact()`
+   yourself when multiple reads need to be mutually consistent.
+ * Removed the per-query `.watch()` on `Query`/`QuerySingle`/related types
+   — superseded by `Database.watch()`, which covers the single-query case
+   too (`db.watch(() => query.fetch())`) without the redundant "watch
+   fetches data just to detect a change" coupling the per-query version had.
 
 ## 0.1.13
  * Support `CREATE INDEX` DDLs through `@Index` annotations.

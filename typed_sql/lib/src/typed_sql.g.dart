@@ -262,6 +262,7 @@ extension Query1<A> on Query<(Expr<A>,)> {
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<A> stream() async* {
     final from = _from(_expressions.toList());
+    _context._recordTableAccess(_tablesReadBy(from));
     final decode1 = _expressions.$1._decode;
     final task = _context._dialect.select(SelectStatement._(from));
     await for (final row in _context._query(task)) {
@@ -1127,6 +1128,7 @@ extension Query2<A, B> on Query<(Expr<A>, Expr<B>)> {
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B)> stream() async* {
     final from = _from(_expressions.toList());
+    _context._recordTableAccess(_tablesReadBy(from));
     final decode1 = _expressions.$1._decode;
     final decode2 = _expressions.$2._decode;
     final task = _context._dialect.select(SelectStatement._(from));
@@ -2015,6 +2017,7 @@ extension Query3<A, B, C> on Query<(Expr<A>, Expr<B>, Expr<C>)> {
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C)> stream() async* {
     final from = _from(_expressions.toList());
+    _context._recordTableAccess(_tablesReadBy(from));
     final decode1 = _expressions.$1._decode;
     final decode2 = _expressions.$2._decode;
     final decode3 = _expressions.$3._decode;
@@ -2933,6 +2936,7 @@ extension Query4<A, B, C, D> on Query<(Expr<A>, Expr<B>, Expr<C>, Expr<D>)> {
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D)> stream() async* {
     final from = _from(_expressions.toList());
+    _context._recordTableAccess(_tablesReadBy(from));
     final decode1 = _expressions.$1._decode;
     final decode2 = _expressions.$2._decode;
     final decode3 = _expressions.$3._decode;
@@ -3928,6 +3932,7 @@ extension Query5<A, B, C, D, E>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E)> stream() async* {
     final from = _from(_expressions.toList());
+    _context._recordTableAccess(_tablesReadBy(from));
     final decode1 = _expressions.$1._decode;
     final decode2 = _expressions.$2._decode;
     final decode3 = _expressions.$3._decode;
@@ -4968,6 +4973,7 @@ extension Query6<A, B, C, D, E, F>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E, F)> stream() async* {
     final from = _from(_expressions.toList());
+    _context._recordTableAccess(_tablesReadBy(from));
     final decode1 = _expressions.$1._decode;
     final decode2 = _expressions.$2._decode;
     final decode3 = _expressions.$3._decode;
@@ -6117,6 +6123,7 @@ extension Query7<A, B, C, D, E, F, G>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E, F, G)> stream() async* {
     final from = _from(_expressions.toList());
+    _context._recordTableAccess(_tablesReadBy(from));
     final decode1 = _expressions.$1._decode;
     final decode2 = _expressions.$2._decode;
     final decode3 = _expressions.$3._decode;
@@ -7458,6 +7465,7 @@ extension Query8<A, B, C, D, E, F, G, H>
   /// Query the database for rows in this [Query] as a [Stream].
   Stream<(A, B, C, D, E, F, G, H)> stream() async* {
     final from = _from(_expressions.toList());
+    _context._recordTableAccess(_tablesReadBy(from));
     final decode1 = _expressions.$1._decode;
     final decode2 = _expressions.$2._decode;
     final decode3 = _expressions.$3._decode;
@@ -16687,8 +16695,12 @@ extension Return1<A> on Return<(Expr<A>,)> {
   /// Execute this statement and return the output as a [Stream].
   Stream<A> executeAndStream() async* {
     final task = _render(_expressions.toList());
-    await for (final r in _context._query(task)) {
-      yield _expressions.$1._decode(r) as A;
+    try {
+      await for (final r in _context._query(task)) {
+        yield _expressions.$1._decode(r) as A;
+      }
+    } finally {
+      _context._notifyChanged(_affectedTables);
     }
   }
 
@@ -16717,8 +16729,15 @@ extension Return2<A, B> on Return<(Expr<A>, Expr<B>)> {
   /// Execute this statement and return the output as a [Stream].
   Stream<(A, B)> executeAndStream() async* {
     final task = _render(_expressions.toList());
-    await for (final r in _context._query(task)) {
-      yield (_expressions.$1._decode(r) as A, _expressions.$2._decode(r) as B);
+    try {
+      await for (final r in _context._query(task)) {
+        yield (
+          _expressions.$1._decode(r) as A,
+          _expressions.$2._decode(r) as B,
+        );
+      }
+    } finally {
+      _context._notifyChanged(_affectedTables);
     }
   }
 
@@ -16753,12 +16772,16 @@ extension Return3<A, B, C> on Return<(Expr<A>, Expr<B>, Expr<C>)> {
   /// Execute this statement and return the output as a [Stream].
   Stream<(A, B, C)> executeAndStream() async* {
     final task = _render(_expressions.toList());
-    await for (final r in _context._query(task)) {
-      yield (
-        _expressions.$1._decode(r) as A,
-        _expressions.$2._decode(r) as B,
-        _expressions.$3._decode(r) as C,
-      );
+    try {
+      await for (final r in _context._query(task)) {
+        yield (
+          _expressions.$1._decode(r) as A,
+          _expressions.$2._decode(r) as B,
+          _expressions.$3._decode(r) as C,
+        );
+      }
+    } finally {
+      _context._notifyChanged(_affectedTables);
     }
   }
 
@@ -16793,13 +16816,17 @@ extension Return4<A, B, C, D> on Return<(Expr<A>, Expr<B>, Expr<C>, Expr<D>)> {
   /// Execute this statement and return the output as a [Stream].
   Stream<(A, B, C, D)> executeAndStream() async* {
     final task = _render(_expressions.toList());
-    await for (final r in _context._query(task)) {
-      yield (
-        _expressions.$1._decode(r) as A,
-        _expressions.$2._decode(r) as B,
-        _expressions.$3._decode(r) as C,
-        _expressions.$4._decode(r) as D,
-      );
+    try {
+      await for (final r in _context._query(task)) {
+        yield (
+          _expressions.$1._decode(r) as A,
+          _expressions.$2._decode(r) as B,
+          _expressions.$3._decode(r) as C,
+          _expressions.$4._decode(r) as D,
+        );
+      }
+    } finally {
+      _context._notifyChanged(_affectedTables);
     }
   }
 
@@ -16837,14 +16864,18 @@ extension Return5<A, B, C, D, E>
   /// Execute this statement and return the output as a [Stream].
   Stream<(A, B, C, D, E)> executeAndStream() async* {
     final task = _render(_expressions.toList());
-    await for (final r in _context._query(task)) {
-      yield (
-        _expressions.$1._decode(r) as A,
-        _expressions.$2._decode(r) as B,
-        _expressions.$3._decode(r) as C,
-        _expressions.$4._decode(r) as D,
-        _expressions.$5._decode(r) as E,
-      );
+    try {
+      await for (final r in _context._query(task)) {
+        yield (
+          _expressions.$1._decode(r) as A,
+          _expressions.$2._decode(r) as B,
+          _expressions.$3._decode(r) as C,
+          _expressions.$4._decode(r) as D,
+          _expressions.$5._decode(r) as E,
+        );
+      }
+    } finally {
+      _context._notifyChanged(_affectedTables);
     }
   }
 
@@ -16882,15 +16913,19 @@ extension Return6<A, B, C, D, E, F>
   /// Execute this statement and return the output as a [Stream].
   Stream<(A, B, C, D, E, F)> executeAndStream() async* {
     final task = _render(_expressions.toList());
-    await for (final r in _context._query(task)) {
-      yield (
-        _expressions.$1._decode(r) as A,
-        _expressions.$2._decode(r) as B,
-        _expressions.$3._decode(r) as C,
-        _expressions.$4._decode(r) as D,
-        _expressions.$5._decode(r) as E,
-        _expressions.$6._decode(r) as F,
-      );
+    try {
+      await for (final r in _context._query(task)) {
+        yield (
+          _expressions.$1._decode(r) as A,
+          _expressions.$2._decode(r) as B,
+          _expressions.$3._decode(r) as C,
+          _expressions.$4._decode(r) as D,
+          _expressions.$5._decode(r) as E,
+          _expressions.$6._decode(r) as F,
+        );
+      }
+    } finally {
+      _context._notifyChanged(_affectedTables);
     }
   }
 
@@ -16928,16 +16963,20 @@ extension Return7<A, B, C, D, E, F, G>
   /// Execute this statement and return the output as a [Stream].
   Stream<(A, B, C, D, E, F, G)> executeAndStream() async* {
     final task = _render(_expressions.toList());
-    await for (final r in _context._query(task)) {
-      yield (
-        _expressions.$1._decode(r) as A,
-        _expressions.$2._decode(r) as B,
-        _expressions.$3._decode(r) as C,
-        _expressions.$4._decode(r) as D,
-        _expressions.$5._decode(r) as E,
-        _expressions.$6._decode(r) as F,
-        _expressions.$7._decode(r) as G,
-      );
+    try {
+      await for (final r in _context._query(task)) {
+        yield (
+          _expressions.$1._decode(r) as A,
+          _expressions.$2._decode(r) as B,
+          _expressions.$3._decode(r) as C,
+          _expressions.$4._decode(r) as D,
+          _expressions.$5._decode(r) as E,
+          _expressions.$6._decode(r) as F,
+          _expressions.$7._decode(r) as G,
+        );
+      }
+    } finally {
+      _context._notifyChanged(_affectedTables);
     }
   }
 
@@ -16993,17 +17032,21 @@ extension Return8<A, B, C, D, E, F, G, H>
   /// Execute this statement and return the output as a [Stream].
   Stream<(A, B, C, D, E, F, G, H)> executeAndStream() async* {
     final task = _render(_expressions.toList());
-    await for (final r in _context._query(task)) {
-      yield (
-        _expressions.$1._decode(r) as A,
-        _expressions.$2._decode(r) as B,
-        _expressions.$3._decode(r) as C,
-        _expressions.$4._decode(r) as D,
-        _expressions.$5._decode(r) as E,
-        _expressions.$6._decode(r) as F,
-        _expressions.$7._decode(r) as G,
-        _expressions.$8._decode(r) as H,
-      );
+    try {
+      await for (final r in _context._query(task)) {
+        yield (
+          _expressions.$1._decode(r) as A,
+          _expressions.$2._decode(r) as B,
+          _expressions.$3._decode(r) as C,
+          _expressions.$4._decode(r) as D,
+          _expressions.$5._decode(r) as E,
+          _expressions.$6._decode(r) as F,
+          _expressions.$7._decode(r) as G,
+          _expressions.$8._decode(r) as H,
+        );
+      }
+    } finally {
+      _context._notifyChanged(_affectedTables);
     }
   }
 

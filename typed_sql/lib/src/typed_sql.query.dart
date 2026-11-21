@@ -466,6 +466,20 @@ final class ExceptClause extends CompositeQueryClause {
   ExceptClause._(super.left, super.right) : super._();
 }
 
+/// Names of all tables read by [clause], used by `.watch()` to determine
+/// when a query needs to be re-evaluated.
+Set<String> _tablesReadBy(QueryClause clause) => switch (clause) {
+  TableClause(:final name) => {name},
+  SelectClause() => {},
+  JoinClause(:final from, :final join) => _tablesReadBy(
+    from,
+  ).union(_tablesReadBy(join)),
+  FromClause(:final from) => _tablesReadBy(from),
+  CompositeQueryClause(:final left, :final right) => _tablesReadBy(
+    left,
+  ).union(_tablesReadBy(right)),
+};
+
 /* --------------------- Auxiliary utils for SQL rendering------------------- */
 
 final class ExpressionResolver<T> {

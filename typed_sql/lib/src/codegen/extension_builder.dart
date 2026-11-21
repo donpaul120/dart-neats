@@ -566,6 +566,7 @@ Iterable<Spec> _buildQueryExtension(int i) sync* {
                 ..body = Code(
                   [
                     'final from = _from(_expressions.toList());',
+                    '_context._recordTableAccess(_tablesReadBy(from));',
                     ...List.generate(
                       i,
                       (i) =>
@@ -1216,8 +1217,12 @@ Iterable<Spec> _buildReturnExtension(int i) sync* {
             ..modifier = MethodModifier.asyncStar
             ..body = Code('''
             final task = _render(_expressions.toList());
-            await for (final r in _context._query(task)) {
-              yield ${i == 1 ? '_expressions.\$1._decode(r) as ${typeArg[0]}' : '(${List.generate(i, (i) => '_expressions.\$${i + 1}._decode(r) as ${typeArg[i]}').join(',')})'};
+            try {
+              await for (final r in _context._query(task)) {
+                yield ${i == 1 ? '_expressions.\$1._decode(r) as ${typeArg[0]}' : '(${List.generate(i, (i) => '_expressions.\$${i + 1}._decode(r) as ${typeArg[i]}').join(',')})'};
+              }
+            } finally {
+              _context._notifyChanged(_affectedTables);
             }
           '''),
         ),
