@@ -77,6 +77,29 @@ void main() {
     await queue.cancel(immediate: true);
   });
 
+  test('db.watch() re-emits after upsertValue() updates or inserts', () async {
+    final queue = StreamQueue(db.watch(() => db.packages.fetch()));
+    check(await queue.next).length.equals(2);
+
+    // Update branch: 'foo' already exists.
+    await db.packages
+        .upsertValue(packageName: 'foo', likes: 99, ownerId: 1)
+        .execute();
+    final afterUpdate = await queue.next.timeout(const Duration(seconds: 5));
+    check(afterUpdate).length.equals(2);
+    check(afterUpdate.firstWhere((p) => p.packageName == 'foo').likes)
+        .equals(99);
+
+    // Insert branch: 'baz' doesn't exist yet.
+    await db.packages
+        .upsertValue(packageName: 'baz', likes: 1, ownerId: 1)
+        .execute();
+    final afterInsert = await queue.next.timeout(const Duration(seconds: 5));
+    check(afterInsert).length.equals(3);
+
+    await queue.cancel(immediate: true);
+  });
+
   test('db.watch() re-emits after an insert into a watched table', () async {
     final queue = StreamQueue(db.watch(() => db.packages.fetch()));
     check(await queue.next).length.equals(2);
