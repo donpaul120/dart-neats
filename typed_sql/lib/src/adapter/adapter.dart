@@ -70,8 +70,11 @@ abstract base class DatabaseAdapter extends Executor {
   /// > Do not use `:memory:`, the [DatabaseAdapter] **must** be able to open
   /// > concurrent connections. For testing consider using
   /// > [DatabaseAdapter.sqlite3TestDatabase]. If you want an in-memory
-  /// > database, use _shared-cache_ with [URI filename][1], such as:
-  /// > `file:memdb1?mode=memory&cache=shared`.
+  /// > database, use the `memdb` VFS with a [URI filename][1] that starts with
+  /// > `/`, such as `file:/memdb1?vfs=memdb`. Don't rely on _shared-cache_
+  /// > (`file:memdb1?mode=memory&cache=shared`): the SQLite bundled by
+  /// > `package:sqlite3` 3.x is built without it, so each connection would get
+  /// > its own empty database.
   /// >
   /// > See also SQLite3 documentation on [In-Memory Databases][2].
   ///

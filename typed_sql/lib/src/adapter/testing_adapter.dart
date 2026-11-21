@@ -23,7 +23,11 @@ import 'adapter.dart';
 import 'wrapclose_adapter.dart';
 
 Future<DatabaseAdapter> sqlite3TestingDatabaseAdapter() async {
-  final u = Uri.parse('file:inmemory-${uuid()}?mode=memory&cache=shared');
+  // The memdb VFS shares one in-memory database between all connections in
+  // the process that open the same name (it must start with '/'). Unlike
+  // `mode=memory&cache=shared`, it doesn't need shared-cache, which the SQLite
+  // bundled by package:sqlite3 3.x omits (SQLITE_OMIT_SHARED_CACHE).
+  final u = Uri.parse('file:/inmemory-${uuid()}?vfs=memdb');
   return DatabaseAdapter.sqlite3(u);
 }
 

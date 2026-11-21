@@ -4,6 +4,12 @@
    * Support `upsert` as a shortcut to `insert` + `onConflict` + `update`.
    * Added `unixSocket` option to `DatabaseAdapter.postgresTestDatabase`, allowing
      a _relative path_ to be used when connecting over a unix socket.
+ * Allow `package:sqlite3` 3.x (`>=2.9.0 <4.0.0`). sqlite3 3.x bundles SQLite
+   through build hooks, so apps can drop `sqlite3_flutter_libs`.
+ * `DatabaseAdapter.sqlite3TestDatabase()` opens its in-memory database with
+   the `memdb` VFS instead of `mode=memory&cache=shared`. The SQLite bundled by
+   sqlite3 3.x omits shared-cache, so concurrent connections each got their own
+   empty database. The `DatabaseAdapter.sqlite3` docs now recommend `memdb` too.
 
 ## 0.1.16
  * Republished to moniepub; no code changes from 0.1.15.
