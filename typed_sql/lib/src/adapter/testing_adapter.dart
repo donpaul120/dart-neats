@@ -20,6 +20,7 @@ import 'package:postgres/postgres.dart';
 import '../utils/socket_path.dart';
 import '../utils/uuid.dart';
 import 'adapter.dart';
+import 'sqlite_adapter.dart';
 import 'wrapclose_adapter.dart';
 
 Future<DatabaseAdapter> sqlite3TestingDatabaseAdapter() async {
@@ -28,7 +29,10 @@ Future<DatabaseAdapter> sqlite3TestingDatabaseAdapter() async {
   // `mode=memory&cache=shared`, it doesn't need shared-cache, which the SQLite
   // bundled by package:sqlite3 3.x omits (SQLITE_OMIT_SHARED_CACHE).
   final u = Uri.parse('file:/inmemory-${uuid()}?vfs=memdb');
-  return DatabaseAdapter.sqlite3(u);
+  // One connection: memdb refuses readers while any connection holds a write
+  // lock, so a pooled read (for example a Database.watch() re-fetch) during a
+  // transaction would fail with SQLITE_BUSY. A single connection queues it.
+  return sqlite3Adapter(u, maxConnections: 1);
 }
 
 Future<DatabaseAdapter> postgresTestingDatabaseAdapter({

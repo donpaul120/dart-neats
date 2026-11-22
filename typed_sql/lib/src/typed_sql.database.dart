@@ -37,8 +37,7 @@ final class Database<T extends Schema> {
   /// Tables read so far during the current [watch] callback invocation, if
   /// any — populated opportunistically by every `Query.stream()` call, see
   /// the `stream()` codegen template.
-  Set<String>? get _trackedTables =>
-      Zone.current[_trackingKey] as Set<String>?;
+  Set<String>? get _trackedTables => Zone.current[_trackingKey] as Set<String>?;
 
   /// Records that [tables] were read, if a [watch] callback is currently
   /// tracking (i.e. we're inside the [Zone] established by [watch]).

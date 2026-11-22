@@ -87,8 +87,9 @@ void main() {
         .execute();
     final afterUpdate = await queue.next.timeout(const Duration(seconds: 5));
     check(afterUpdate).length.equals(2);
-    check(afterUpdate.firstWhere((p) => p.packageName == 'foo').likes)
-        .equals(99);
+    check(
+      afterUpdate.firstWhere((p) => p.packageName == 'foo').likes,
+    ).equals(99);
 
     // Insert branch: 'baz' doesn't exist yet.
     await db.packages
@@ -164,42 +165,46 @@ void main() {
     await queue.cancel(immediate: true);
   });
 
-  test('db.watch() over a QuerySingle emits null, then the row once it exists',
-      () async {
-    final queue = StreamQueue(
-      db.watch(() => db.packages.byKey('new-pkg').fetch()),
-    );
-    check(await queue.next).isNull();
+  test(
+    'db.watch() over a QuerySingle emits null, then the row once it exists',
+    () async {
+      final queue = StreamQueue(
+        db.watch(() => db.packages.byKey('new-pkg').fetch()),
+      );
+      check(await queue.next).isNull();
 
-    await db.packages
-        .insert(packageName: toExpr('new-pkg'), ownerId: toExpr(1))
-        .execute();
-
-    final afterInsert = await queue.next;
-    check(afterInsert).isNotNull();
-    check(afterInsert!.packageName).equals('new-pkg');
-    await queue.cancel(immediate: true);
-  });
-
-  test('db.watch() batches writes inside transact() into one emission',
-      () async {
-    final queue = StreamQueue(db.watch(() => db.packages.fetch()));
-    check(await queue.next).length.equals(2);
-
-    await db.transact(() async {
       await db.packages
-          .insert(packageName: toExpr('p1'), ownerId: toExpr(1))
+          .insert(packageName: toExpr('new-pkg'), ownerId: toExpr(1))
           .execute();
-      await db.packages
-          .insert(packageName: toExpr('p2'), ownerId: toExpr(1))
-          .execute();
-    });
 
-    // A single emission reflecting both inserts, not one per statement.
-    check(await queue.next).length.equals(4);
-    check(await _timesOutWaitingForNext(queue)).isTrue();
-    await queue.cancel(immediate: true);
-  });
+      final afterInsert = await queue.next;
+      check(afterInsert).isNotNull();
+      check(afterInsert!.packageName).equals('new-pkg');
+      await queue.cancel(immediate: true);
+    },
+  );
+
+  test(
+    'db.watch() batches writes inside transact() into one emission',
+    () async {
+      final queue = StreamQueue(db.watch(() => db.packages.fetch()));
+      check(await queue.next).length.equals(2);
+
+      await db.transact(() async {
+        await db.packages
+            .insert(packageName: toExpr('p1'), ownerId: toExpr(1))
+            .execute();
+        await db.packages
+            .insert(packageName: toExpr('p2'), ownerId: toExpr(1))
+            .execute();
+      });
+
+      // A single emission reflecting both inserts, not one per statement.
+      check(await queue.next).length.equals(4);
+      check(await _timesOutWaitingForNext(queue)).isTrue();
+      await queue.cancel(immediate: true);
+    },
+  );
 
   test(
     'db.watch(() => db.transact(...)) composes: the fetch callback runs '
@@ -234,6 +239,37 @@ void main() {
     },
   );
 
+  test(
+    'db.watch() on sqlite3TestDatabase() reads while a transact() holds '
+    'the write lock, without "database is locked"',
+    () async {
+      // Subscribe and save straight away: the watch's fetch overlaps the
+      // transaction. With several pooled connections the memdb VFS refuses
+      // the read while the write lock is held (SQLITE_BUSY), and busy_timeout
+      // can't help because it's all synchronous FFI on one isolate.
+      final queue = StreamQueue(db.watch(() => db.packages.fetch()));
+      final save = db.transact(() async {
+        await db.packages
+            .insert(packageName: toExpr('p1'), ownerId: toExpr(1))
+            .execute();
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        await db.packages
+            .insert(packageName: toExpr('p2'), ownerId: toExpr(1))
+            .execute();
+      });
+      await save.timeout(const Duration(seconds: 20));
+
+      // Whatever the first emission saw, the stream settles on the saved
+      // state and never errors.
+      var rows = await queue.next.timeout(const Duration(seconds: 20));
+      while (rows.length != 4) {
+        rows = await queue.next.timeout(const Duration(seconds: 20));
+      }
+      check(rows).length.equals(4);
+      await queue.cancel(immediate: true);
+    },
+  );
+
   test('db.watch() does not emit for a rolled back transaction', () async {
     final queue = StreamQueue(db.watch(() => db.packages.fetch()));
     check(await queue.next).length.equals(2);
@@ -256,26 +292,28 @@ void main() {
     await queue.cancel(immediate: true);
   });
 
-  test('db.watch() gives each listener its own fresh initial snapshot',
-      () async {
-    final stream = db.watch(() => db.packages.fetch());
+  test(
+    'db.watch() gives each listener its own fresh initial snapshot',
+    () async {
+      final stream = db.watch(() => db.packages.fetch());
 
-    final q1 = StreamQueue(stream);
-    check(await q1.next).length.equals(2);
+      final q1 = StreamQueue(stream);
+      check(await q1.next).length.equals(2);
 
-    await db.packages
-        .insert(packageName: toExpr('baz'), ownerId: toExpr(1))
-        .execute();
-    check(await q1.next).length.equals(3);
+      await db.packages
+          .insert(packageName: toExpr('baz'), ownerId: toExpr(1))
+          .execute();
+      check(await q1.next).length.equals(3);
 
-    // A listener attaching *after* the write should still get its own
-    // fresh, up-to-date initial snapshot, not miss it or replay stale data.
-    final q2 = StreamQueue(stream);
-    check(await q2.next).length.equals(3);
+      // A listener attaching *after* the write should still get its own
+      // fresh, up-to-date initial snapshot, not miss it or replay stale data.
+      final q2 = StreamQueue(stream);
+      check(await q2.next).length.equals(3);
 
-    await q1.cancel(immediate: true);
-    await q2.cancel(immediate: true);
-  });
+      await q1.cancel(immediate: true);
+      await q2.cancel(immediate: true);
+    },
+  );
 
   test(
     'cancelling a db.watch() subscription does not break later writes',
@@ -392,7 +430,9 @@ void main() {
       // behavior (favor a redundant refetch over a missed update), not
       // something a future change should "optimize away" into a bug.
       final events = <int>[];
-      final sub = db.watch(() => db.packages.fetch()).listen(
+      final sub = db
+          .watch(() => db.packages.fetch())
+          .listen(
             (rows) => events.add(rows.length),
           );
 

@@ -1,3 +1,11 @@
+## 0.1.20
+ * `DatabaseAdapter.sqlite3TestDatabase()` uses a single connection. The memdb
+   VFS (since 0.1.18) refuses readers while another connection holds a write
+   lock, so a pooled read during a transaction, such as a `Database.watch()`
+   re-fetch, failed with "database is locked" (SQLITE_BUSY) after stalling the
+   isolate for the 5 s busy timeout. One connection queues the read instead.
+   `DatabaseAdapter.sqlite3()` for files keeps its pool of 10 connections.
+
 ## 0.1.19
  * Generated code no longer needs Dart 3.10 (no dot shorthands). `upsert()` /
    `upsertValue()` now emit `<Row>Conflict.primaryKey` and foreign keys emit

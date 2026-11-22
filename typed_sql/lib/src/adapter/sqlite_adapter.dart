@@ -22,13 +22,14 @@ import '../utils/normalize_json.dart' show normalizeJson;
 import '../utils/notifier.dart';
 import 'adapter.dart';
 
-DatabaseAdapter sqlite3Adapter(Uri uri) => _SqliteDatabaseAdapter(uri);
+DatabaseAdapter sqlite3Adapter(Uri uri, {int maxConnections = 10}) =>
+    _SqliteDatabaseAdapter(uri, maxConnections);
 
 final class _SqliteDatabaseAdapter extends DatabaseAdapter {
   final Uri _uri;
-  final int _maxConnections = 10;
+  final int _maxConnections;
 
-  _SqliteDatabaseAdapter(this._uri);
+  _SqliteDatabaseAdapter(this._uri, this._maxConnections);
 
   bool _closing = false;
   bool _closed = false;
