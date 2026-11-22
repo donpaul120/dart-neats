@@ -1,7 +1,6 @@
-## 0.1.17+moniepoint
- * Published to moniepub as `0.1.17+moniepoint`, so it can't collide with a
-   future upstream `0.1.17` on pub.dev (moniepub's `0.1.14` already differs
-   from pub.dev's `0.1.14`).
+## 0.1.18
+ * Same code as `0.1.17+moniepoint`, which was published to moniepub first under
+   that name. Don't use `0.1.17+moniepoint`; depend on `^0.1.18`.
  * Merged google/dart-neats master, which brings upstream 0.1.14:
    * Support `upsertValue` as a shortcut to `insertValue` + `onConflict` + `update`.
    * Support `upsert` as a shortcut to `insert` + `onConflict` + `update`.
