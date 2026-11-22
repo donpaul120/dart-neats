@@ -94,8 +94,8 @@ final class _$Author extends Author {
         columns: ['favoriteBookId'],
         referencedTable: 'books',
         referencedColumns: ['bookId'],
-        onDelete: .noAction,
-        onUpdate: .noAction,
+        onDelete: ReferentialAction.noAction,
+        onUpdate: ReferentialAction.noAction,
       ),
     ],
     indexes: [],
@@ -147,7 +147,7 @@ extension TableAuthorExt on Table<Author> {
     required Expr<String> name,
     Expr<int?>? favoriteBookId,
   }) => insert(authorId: authorId, name: name, favoriteBookId: favoriteBookId)
-      .onConflict(.primaryKey)
+      .onConflict(AuthorConflict.primaryKey)
       .update(
         (_, excluded, set) =>
             set(name: excluded.name, favoriteBookId: excluded.favoriteBookId),
@@ -186,7 +186,7 @@ extension TableAuthorExt on Table<Author> {
             name: name,
             favoriteBookId: favoriteBookId,
           )
-          .onConflict(.primaryKey)
+          .onConflict(AuthorConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               name: excluded.name,
@@ -812,16 +812,16 @@ final class _$Book extends Book {
         columns: ['authorId'],
         referencedTable: 'authors',
         referencedColumns: ['authorId'],
-        onDelete: .noAction,
-        onUpdate: .noAction,
+        onDelete: ReferentialAction.noAction,
+        onUpdate: ReferentialAction.noAction,
       ),
       $ForGeneratedCode.foreignKeyDefinition(
         name: 'editor',
         columns: ['editorId'],
         referencedTable: 'authors',
         referencedColumns: ['authorId'],
-        onDelete: .noAction,
-        onUpdate: .noAction,
+        onDelete: ReferentialAction.noAction,
+        onUpdate: ReferentialAction.noAction,
       ),
     ],
     indexes: [],
@@ -890,7 +890,7 @@ extension TableBookExt on Table<Book> {
             editorId: editorId,
             stock: stock,
           )
-          .onConflict(.primaryKey)
+          .onConflict(BookConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               title: excluded.title,
@@ -945,7 +945,7 @@ extension TableBookExt on Table<Book> {
             editorId: editorId,
             stock: stock,
           )
-          .onConflict(.primaryKey)
+          .onConflict(BookConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               title: excluded.title,

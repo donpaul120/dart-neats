@@ -162,7 +162,7 @@ extension TableItemExt on Table<Item> {
     Expr<double?>? real,
     Expr<JsonValue?>? json,
   }) => insert(id: id, text: text, integer: integer, real: real, json: json)
-      .onConflict(.primaryKey)
+      .onConflict(ItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           text: excluded.text,
@@ -205,7 +205,7 @@ extension TableItemExt on Table<Item> {
     JsonValue? json,
   }) =>
       insertValue(id: id, text: text, integer: integer, real: real, json: json)
-          .onConflict(.primaryKey)
+          .onConflict(ItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               text: excluded.text,

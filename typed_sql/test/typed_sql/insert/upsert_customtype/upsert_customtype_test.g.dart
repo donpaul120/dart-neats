@@ -124,7 +124,7 @@ extension TableCustomTypeItemExt on Table<CustomTypeItem> {
     Expr<int>? id,
     required Expr<MyCustomType> value,
   }) => insert(id: id, value: value)
-      .onConflict(.primaryKey)
+      .onConflict(CustomTypeItemConflict.primaryKey)
       .update((_, excluded, set) => set(value: excluded.value));
 
   /// Insert row into the `customTypeItems` table.
@@ -153,7 +153,7 @@ extension TableCustomTypeItemExt on Table<CustomTypeItem> {
     int? id,
     required MyCustomType value,
   }) => insertValue(id: id, value: value)
-      .onConflict(.primaryKey)
+      .onConflict(CustomTypeItemConflict.primaryKey)
       .update((_, excluded, set) => set(value: excluded.value));
 
   /// Bulk insert rows into the `customTypeItems` table.

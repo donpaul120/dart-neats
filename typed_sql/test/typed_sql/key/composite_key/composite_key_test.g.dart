@@ -135,7 +135,7 @@ extension TableItemExt on Table<Item> {
     required Expr<String> name,
     Expr<String?>? value,
   }) => insert(id: id, name: name, value: value)
-      .onConflict(.primaryKey)
+      .onConflict(ItemConflict.primaryKey)
       .update((_, excluded, set) => set(value: excluded.value));
 
   /// Insert row into the `items` table.
@@ -166,7 +166,7 @@ extension TableItemExt on Table<Item> {
     required String name,
     String? value,
   }) => insertValue(id: id, name: name, value: value)
-      .onConflict(.primaryKey)
+      .onConflict(ItemConflict.primaryKey)
       .update((_, excluded, set) => set(value: excluded.value));
 
   /// Bulk insert rows into the `items` table.

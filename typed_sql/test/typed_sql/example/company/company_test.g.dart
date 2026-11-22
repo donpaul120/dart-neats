@@ -139,7 +139,7 @@ extension TableDepartmentExt on Table<Department> {
     required Expr<String> name,
     required Expr<String> location,
   }) => insert(departmentId: departmentId, name: name, location: location)
-      .onConflict(.primaryKey)
+      .onConflict(DepartmentConflict.primaryKey)
       .update(
         (_, excluded, set) =>
             set(name: excluded.name, location: excluded.location),
@@ -173,7 +173,7 @@ extension TableDepartmentExt on Table<Department> {
     required String name,
     required String location,
   }) => insertValue(departmentId: departmentId, name: name, location: location)
-      .onConflict(.primaryKey)
+      .onConflict(DepartmentConflict.primaryKey)
       .update(
         (_, excluded, set) =>
             set(name: excluded.name, location: excluded.location),
@@ -685,8 +685,8 @@ final class _$Employee extends Employee {
         columns: ['departmentId'],
         referencedTable: 'departments',
         referencedColumns: ['departmentId'],
-        onDelete: .noAction,
-        onUpdate: .noAction,
+        onDelete: ReferentialAction.noAction,
+        onUpdate: ReferentialAction.noAction,
       ),
     ],
     indexes: [],
@@ -738,7 +738,7 @@ extension TableEmployeeExt on Table<Employee> {
     required Expr<String> name,
     Expr<int?>? departmentId,
   }) => insert(employeeId: employeeId, name: name, departmentId: departmentId)
-      .onConflict(.primaryKey)
+      .onConflict(EmployeeConflict.primaryKey)
       .update(
         (_, excluded, set) =>
             set(name: excluded.name, departmentId: excluded.departmentId),
@@ -777,7 +777,7 @@ extension TableEmployeeExt on Table<Employee> {
             name: name,
             departmentId: departmentId,
           )
-          .onConflict(.primaryKey)
+          .onConflict(EmployeeConflict.primaryKey)
           .update(
             (_, excluded, set) =>
                 set(name: excluded.name, departmentId: excluded.departmentId),

@@ -140,7 +140,7 @@ extension TableUserExt on Table<User> {
     required Expr<String> name,
     required Expr<String> email,
   }) => insert(userId: userId, name: name, email: email)
-      .onConflict(.primaryKey)
+      .onConflict(UserConflict.primaryKey)
       .update(
         (_, excluded, set) => set(name: excluded.name, email: excluded.email),
       );
@@ -173,7 +173,7 @@ extension TableUserExt on Table<User> {
     required String name,
     required String email,
   }) => insertValue(userId: userId, name: name, email: email)
-      .onConflict(.primaryKey)
+      .onConflict(UserConflict.primaryKey)
       .update(
         (_, excluded, set) => set(name: excluded.name, email: excluded.email),
       );
@@ -701,8 +701,8 @@ final class _$Package extends Package {
         columns: ['ownerId'],
         referencedTable: 'users',
         referencedColumns: ['userId'],
-        onDelete: .noAction,
-        onUpdate: .noAction,
+        onDelete: ReferentialAction.noAction,
+        onUpdate: ReferentialAction.noAction,
       ),
     ],
     indexes: [
@@ -777,7 +777,7 @@ extension TablePackageExt on Table<Package> {
             ownerId: ownerId,
             publisher: publisher,
           )
-          .onConflict(.primaryKey)
+          .onConflict(PackageConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               likes: excluded.likes,
@@ -827,7 +827,7 @@ extension TablePackageExt on Table<Package> {
             ownerId: ownerId,
             publisher: publisher,
           )
-          .onConflict(.primaryKey)
+          .onConflict(PackageConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               likes: excluded.likes,
@@ -1402,7 +1402,7 @@ extension TableLikeExt on Table<Like> {
   }) => insert(
     userId: userId,
     packageName: packageName,
-  ).onConflict(.primaryKey).update((_, excluded, set) => set());
+  ).onConflict(LikeConflict.primaryKey).update((_, excluded, set) => set());
 
   /// Insert row into the `likes` table.
   ///
@@ -1432,7 +1432,7 @@ extension TableLikeExt on Table<Like> {
   }) => insertValue(
     userId: userId,
     packageName: packageName,
-  ).onConflict(.primaryKey).update((_, excluded, set) => set());
+  ).onConflict(LikeConflict.primaryKey).update((_, excluded, set) => set());
 
   /// Bulk insert rows into the `likes` table.
   ///

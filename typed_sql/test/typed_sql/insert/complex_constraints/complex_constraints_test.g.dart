@@ -151,7 +151,7 @@ extension TableCompositePkItemExt on Table<CompositePkItem> {
     required Expr<String> pkB,
     required Expr<String> data,
   }) => insert(pkA: pkA, pkB: pkB, data: data)
-      .onConflict(.primaryKey)
+      .onConflict(CompositePkItemConflict.primaryKey)
       .update((_, excluded, set) => set(data: excluded.data));
 
   /// Insert row into the `compositePkItems` table.
@@ -182,7 +182,7 @@ extension TableCompositePkItemExt on Table<CompositePkItem> {
     required String pkB,
     required String data,
   }) => insertValue(pkA: pkA, pkB: pkB, data: data)
-      .onConflict(.primaryKey)
+      .onConflict(CompositePkItemConflict.primaryKey)
       .update((_, excluded, set) => set(data: excluded.data));
 
   /// Bulk insert rows into the `compositePkItems` table.
@@ -696,7 +696,7 @@ extension TableMultiUniqueItemExt on Table<MultiUniqueItem> {
     required Expr<int> fieldB,
     required Expr<String> data,
   }) => insert(id: id, fieldA: fieldA, fieldB: fieldB, data: data)
-      .onConflict(.primaryKey)
+      .onConflict(MultiUniqueItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           fieldA: excluded.fieldA,
@@ -735,7 +735,7 @@ extension TableMultiUniqueItemExt on Table<MultiUniqueItem> {
     required int fieldB,
     required String data,
   }) => insertValue(id: id, fieldA: fieldA, fieldB: fieldB, data: data)
-      .onConflict(.primaryKey)
+      .onConflict(MultiUniqueItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           fieldA: excluded.fieldA,
@@ -1275,8 +1275,8 @@ final class _$ForeignKeyItem extends ForeignKeyItem {
         columns: ['refPkA', 'refPkB'],
         referencedTable: 'compositePkItems',
         referencedColumns: ['pkA', 'pkB'],
-        onDelete: .noAction,
-        onUpdate: .noAction,
+        onDelete: ReferentialAction.noAction,
+        onUpdate: ReferentialAction.noAction,
       ),
     ],
     indexes: [],
@@ -1331,7 +1331,7 @@ extension TableForeignKeyItemExt on Table<ForeignKeyItem> {
     required Expr<String> refPkB,
     required Expr<String> data,
   }) => insert(id: id, refPkA: refPkA, refPkB: refPkB, data: data)
-      .onConflict(.primaryKey)
+      .onConflict(ForeignKeyItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           refPkA: excluded.refPkA,
@@ -1370,7 +1370,7 @@ extension TableForeignKeyItemExt on Table<ForeignKeyItem> {
     required String refPkB,
     required String data,
   }) => insertValue(id: id, refPkA: refPkA, refPkB: refPkB, data: data)
-      .onConflict(.primaryKey)
+      .onConflict(ForeignKeyItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           refPkA: excluded.refPkA,

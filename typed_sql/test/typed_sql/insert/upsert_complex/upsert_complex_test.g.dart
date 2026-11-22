@@ -218,7 +218,7 @@ extension TableComplexItemExt on Table<ComplexItem> {
             boolValue: boolValue,
             value: value,
           )
-          .onConflict(.primaryKey)
+          .onConflict(ComplexItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               name: excluded.name,
@@ -277,7 +277,7 @@ extension TableComplexItemExt on Table<ComplexItem> {
             boolValue: boolValue,
             value: value,
           )
-          .onConflict(.primaryKey)
+          .onConflict(ComplexItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               name: excluded.name,

@@ -227,7 +227,7 @@ extension TableDefaultsItemExt on Table<DefaultsItem> {
             dtEpoch: dtEpoch,
             json: json,
           )
-          .onConflict(.primaryKey)
+          .onConflict(DefaultsItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               b: excluded.b,
@@ -297,7 +297,7 @@ extension TableDefaultsItemExt on Table<DefaultsItem> {
             dtEpoch: dtEpoch,
             json: json,
           )
-          .onConflict(.primaryKey)
+          .onConflict(DefaultsItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               b: excluded.b,

@@ -123,7 +123,7 @@ extension TableItemExt on Table<Item> {
   /// called for the row to be inserted or updated.
   UpsertSingle<Item> upsert({Expr<int>? id, required Expr<String> value}) =>
       insert(id: id, value: value)
-          .onConflict(.primaryKey)
+          .onConflict(ItemConflict.primaryKey)
           .update((_, excluded, set) => set(value: excluded.value));
 
   /// Insert row into the `items` table.
@@ -148,7 +148,7 @@ extension TableItemExt on Table<Item> {
   /// called for the row to be inserted or updated.
   UpsertSingle<Item> upsertValue({int? id, required String value}) =>
       insertValue(id: id, value: value)
-          .onConflict(.primaryKey)
+          .onConflict(ItemConflict.primaryKey)
           .update((_, excluded, set) => set(value: excluded.value));
 
   /// Bulk insert rows into the `items` table.

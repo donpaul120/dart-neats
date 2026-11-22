@@ -236,7 +236,7 @@ extension TableLegacyUserExt on Table<LegacyUser> {
             email: email,
             color: color,
           )
-          .onConflict(.primaryKey)
+          .onConflict(LegacyUserConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               firstName: excluded.firstName,
@@ -295,7 +295,7 @@ extension TableLegacyUserExt on Table<LegacyUser> {
             email: email,
             color: color,
           )
-          .onConflict(.primaryKey)
+          .onConflict(LegacyUserConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               firstName: excluded.firstName,
@@ -874,8 +874,8 @@ final class _$LegacyComment extends LegacyComment {
         columns: ['t_id', 'u_id'],
         referencedTable: 't_user_data',
         referencedColumns: ['INT_tenant_id', 'INT_user_id'],
-        onDelete: .noAction,
-        onUpdate: .noAction,
+        onDelete: ReferentialAction.noAction,
+        onUpdate: ReferentialAction.noAction,
       ),
     ],
     indexes: [],
@@ -930,7 +930,7 @@ extension TableLegacyCommentExt on Table<LegacyComment> {
     required Expr<int> uId,
     required Expr<String> text,
   }) => insert(commentId: commentId, tId: tId, uId: uId, text: text)
-      .onConflict(.primaryKey)
+      .onConflict(LegacyCommentConflict.primaryKey)
       .update(
         (_, excluded, set) =>
             set(tId: excluded.tId, uId: excluded.uId, text: excluded.text),
@@ -966,7 +966,7 @@ extension TableLegacyCommentExt on Table<LegacyComment> {
     required int uId,
     required String text,
   }) => insertValue(commentId: commentId, tId: tId, uId: uId, text: text)
-      .onConflict(.primaryKey)
+      .onConflict(LegacyCommentConflict.primaryKey)
       .update(
         (_, excluded, set) =>
             set(tId: excluded.tId, uId: excluded.uId, text: excluded.text),

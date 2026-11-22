@@ -130,7 +130,7 @@ extension TableProductExt on Table<Product> {
     required Expr<String> name,
     required Expr<JsonValue> metadata,
   }) => insert(id: id, name: name, metadata: metadata)
-      .onConflict(.primaryKey)
+      .onConflict(ProductConflict.primaryKey)
       .update(
         (_, excluded, set) =>
             set(name: excluded.name, metadata: excluded.metadata),
@@ -164,7 +164,7 @@ extension TableProductExt on Table<Product> {
     required String name,
     required JsonValue metadata,
   }) => insertValue(id: id, name: name, metadata: metadata)
-      .onConflict(.primaryKey)
+      .onConflict(ProductConflict.primaryKey)
       .update(
         (_, excluded, set) =>
             set(name: excluded.name, metadata: excluded.metadata),

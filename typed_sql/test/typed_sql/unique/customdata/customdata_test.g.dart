@@ -134,7 +134,7 @@ extension TableCustomDataItemExt on Table<CustomDataItem> {
     required Expr<CustomIntType> id,
     required Expr<CustomStringType> stringVal,
   }) => insert(id: id, stringVal: stringVal)
-      .onConflict(.primaryKey)
+      .onConflict(CustomDataItemConflict.primaryKey)
       .update((_, excluded, set) => set(stringVal: excluded.stringVal));
 
   /// Insert row into the `customDataItems` table.
@@ -163,7 +163,7 @@ extension TableCustomDataItemExt on Table<CustomDataItem> {
     required CustomIntType id,
     required CustomStringType stringVal,
   }) => insertValue(id: id, stringVal: stringVal)
-      .onConflict(.primaryKey)
+      .onConflict(CustomDataItemConflict.primaryKey)
       .update((_, excluded, set) => set(stringVal: excluded.stringVal));
 
   /// Bulk insert rows into the `customDataItems` table.

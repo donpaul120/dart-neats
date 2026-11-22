@@ -1,3 +1,10 @@
+## 0.1.19
+ * Generated code no longer needs Dart 3.10 (no dot shorthands). `upsert()` /
+   `upsertValue()` now emit `<Row>Conflict.primaryKey` and foreign keys emit
+   `ReferentialAction.<action>`, so packages with an SDK floor below 3.10 can
+   run `build_runner` again (the formatter rejected the generated part with
+   "This requires the 'dot-shorthands' language feature").
+
 ## 0.1.18
  * Same code as `0.1.17+moniepoint`, which was published to moniepub first under
    that name. Don't use `0.1.17+moniepoint`; depend on `^0.1.18`.

@@ -119,7 +119,7 @@ extension TableDepartmentExt on Table<Department> {
     Expr<int>? id,
     required Expr<String> name,
   }) => insert(id: id, name: name)
-      .onConflict(.primaryKey)
+      .onConflict(DepartmentConflict.primaryKey)
       .update((_, excluded, set) => set(name: excluded.name));
 
   /// Insert row into the `departments` table.
@@ -144,7 +144,7 @@ extension TableDepartmentExt on Table<Department> {
   /// called for the row to be inserted or updated.
   UpsertSingle<Department> upsertValue({int? id, required String name}) =>
       insertValue(id: id, name: name)
-          .onConflict(.primaryKey)
+          .onConflict(DepartmentConflict.primaryKey)
           .update((_, excluded, set) => set(name: excluded.name));
 
   /// Bulk insert rows into the `departments` table.
@@ -568,8 +568,8 @@ final class _$Employee extends Employee {
         columns: ['deptId'],
         referencedTable: 'departments',
         referencedColumns: ['id'],
-        onDelete: .noAction,
-        onUpdate: .noAction,
+        onDelete: ReferentialAction.noAction,
+        onUpdate: ReferentialAction.noAction,
       ),
     ],
     indexes: [],
@@ -624,7 +624,7 @@ extension TableEmployeeExt on Table<Employee> {
     required Expr<int> deptId,
     required Expr<int> salary,
   }) => insert(id: id, name: name, deptId: deptId, salary: salary)
-      .onConflict(.primaryKey)
+      .onConflict(EmployeeConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           name: excluded.name,
@@ -663,7 +663,7 @@ extension TableEmployeeExt on Table<Employee> {
     required int deptId,
     required int salary,
   }) => insertValue(id: id, name: name, deptId: deptId, salary: salary)
-      .onConflict(.primaryKey)
+      .onConflict(EmployeeConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           name: excluded.name,

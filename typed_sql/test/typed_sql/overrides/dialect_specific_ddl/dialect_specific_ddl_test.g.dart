@@ -227,7 +227,7 @@ extension TableDialectItemExt on Table<DialectItem> {
             status: status,
             itemColor: itemColor,
           )
-          .onConflict(.primaryKey)
+          .onConflict(DialectItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               name: excluded.name,
@@ -282,7 +282,7 @@ extension TableDialectItemExt on Table<DialectItem> {
             status: status,
             itemColor: itemColor,
           )
-          .onConflict(.primaryKey)
+          .onConflict(DialectItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               name: excluded.name,
@@ -819,8 +819,8 @@ final class _$DialectLog extends DialectLog {
         columns: ['refItemId'],
         referencedTable: 'dialectItems',
         referencedColumns: ['itemId'],
-        onDelete: .noAction,
-        onUpdate: .noAction,
+        onDelete: ReferentialAction.noAction,
+        onUpdate: ReferentialAction.noAction,
       ),
     ],
     indexes: [],
@@ -865,7 +865,7 @@ extension TableDialectLogExt on Table<DialectLog> {
     Expr<int>? logId,
     required Expr<int> refItemId,
   }) => insert(logId: logId, refItemId: refItemId)
-      .onConflict(.primaryKey)
+      .onConflict(DialectLogConflict.primaryKey)
       .update((_, excluded, set) => set(refItemId: excluded.refItemId));
 
   /// Insert row into the `dialectLogs` table.
@@ -890,7 +890,7 @@ extension TableDialectLogExt on Table<DialectLog> {
   /// called for the row to be inserted or updated.
   UpsertSingle<DialectLog> upsertValue({int? logId, required int refItemId}) =>
       insertValue(logId: logId, refItemId: refItemId)
-          .onConflict(.primaryKey)
+          .onConflict(DialectLogConflict.primaryKey)
           .update((_, excluded, set) => set(refItemId: excluded.refItemId));
 
   /// Bulk insert rows into the `dialectLogs` table.

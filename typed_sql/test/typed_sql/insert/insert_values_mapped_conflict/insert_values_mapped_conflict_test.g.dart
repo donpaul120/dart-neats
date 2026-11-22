@@ -145,7 +145,7 @@ extension TableConflictMappedItemExt on Table<ConflictMappedItem> {
     required Expr<String> name,
     required Expr<int> value,
   }) => insert(complexId: complexId, name: name, value: value)
-      .onConflict(.primaryKey)
+      .onConflict(ConflictMappedItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(name: excluded.name, value: excluded.value),
       );
@@ -178,7 +178,7 @@ extension TableConflictMappedItemExt on Table<ConflictMappedItem> {
     required String name,
     required int value,
   }) => insertValue(complexId: complexId, name: name, value: value)
-      .onConflict(.primaryKey)
+      .onConflict(ConflictMappedItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(name: excluded.name, value: excluded.value),
       );

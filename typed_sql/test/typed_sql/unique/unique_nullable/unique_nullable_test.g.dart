@@ -147,7 +147,7 @@ extension TableAccountExt on Table<Account> {
             accountNumber: accountNumber,
             balance: balance,
           )
-          .onConflict(.primaryKey)
+          .onConflict(AccountConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               accountNumber: excluded.accountNumber,
@@ -188,7 +188,7 @@ extension TableAccountExt on Table<Account> {
             accountNumber: accountNumber,
             balance: balance,
           )
-          .onConflict(.primaryKey)
+          .onConflict(AccountConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               accountNumber: excluded.accountNumber,

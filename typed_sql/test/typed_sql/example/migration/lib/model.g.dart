@@ -129,7 +129,7 @@ extension TableAccountExt on Table<Account> {
     Expr<int>? accountId,
     required Expr<String> accountNumber,
   }) => insert(accountId: accountId, accountNumber: accountNumber)
-      .onConflict(.primaryKey)
+      .onConflict(AccountConflict.primaryKey)
       .update((_, excluded, set) => set(accountNumber: excluded.accountNumber));
 
   /// Insert row into the `accounts` table.
@@ -158,7 +158,7 @@ extension TableAccountExt on Table<Account> {
     int? accountId,
     required String accountNumber,
   }) => insertValue(accountId: accountId, accountNumber: accountNumber)
-      .onConflict(.primaryKey)
+      .onConflict(AccountConflict.primaryKey)
       .update((_, excluded, set) => set(accountNumber: excluded.accountNumber));
 
   /// Bulk insert rows into the `accounts` table.

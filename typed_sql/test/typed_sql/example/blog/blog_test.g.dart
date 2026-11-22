@@ -149,7 +149,7 @@ extension TablePostExt on Table<Post> {
     required Expr<String> slug,
     required Expr<String> content,
   }) => insert(author: author, slug: slug, content: content)
-      .onConflict(.primaryKey)
+      .onConflict(PostConflict.primaryKey)
       .update((_, excluded, set) => set(content: excluded.content));
 
   /// Insert row into the `posts` table.
@@ -180,7 +180,7 @@ extension TablePostExt on Table<Post> {
     required String slug,
     required String content,
   }) => insertValue(author: author, slug: slug, content: content)
-      .onConflict(.primaryKey)
+      .onConflict(PostConflict.primaryKey)
       .update((_, excluded, set) => set(content: excluded.content));
 
   /// Bulk insert rows into the `posts` table.
@@ -711,8 +711,8 @@ final class _$Comment extends Comment {
         columns: ['author', 'postSlug'],
         referencedTable: 'posts',
         referencedColumns: ['author', 'slug'],
-        onDelete: .noAction,
-        onUpdate: .noAction,
+        onDelete: ReferentialAction.noAction,
+        onUpdate: ReferentialAction.noAction,
       ),
     ],
     indexes: [],
@@ -776,7 +776,7 @@ extension TableCommentExt on Table<Comment> {
             postSlug: postSlug,
             comment: comment,
           )
-          .onConflict(.primaryKey)
+          .onConflict(CommentConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               author: excluded.author,
@@ -821,7 +821,7 @@ extension TableCommentExt on Table<Comment> {
             postSlug: postSlug,
             comment: comment,
           )
-          .onConflict(.primaryKey)
+          .onConflict(CommentConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               author: excluded.author,

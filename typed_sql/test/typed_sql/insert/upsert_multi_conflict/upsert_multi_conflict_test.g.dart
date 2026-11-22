@@ -166,7 +166,7 @@ extension TableMultiItemExt on Table<MultiItem> {
     required Expr<String> email,
     required Expr<int> value,
   }) => insert(id: id, name: name, email: email, value: value)
-      .onConflict(.primaryKey)
+      .onConflict(MultiItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           name: excluded.name,
@@ -205,7 +205,7 @@ extension TableMultiItemExt on Table<MultiItem> {
     required String email,
     required int value,
   }) => insertValue(id: id, name: name, email: email, value: value)
-      .onConflict(.primaryKey)
+      .onConflict(MultiItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           name: excluded.name,

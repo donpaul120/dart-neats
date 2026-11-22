@@ -122,7 +122,7 @@ extension TableSourceItemExt on Table<SourceItem> {
     Expr<int>? id,
     required Expr<String> value,
   }) => insert(id: id, value: value)
-      .onConflict(.primaryKey)
+      .onConflict(SourceItemConflict.primaryKey)
       .update((_, excluded, set) => set(value: excluded.value));
 
   /// Insert row into the `sourceItems` table.
@@ -147,7 +147,7 @@ extension TableSourceItemExt on Table<SourceItem> {
   /// called for the row to be inserted or updated.
   UpsertSingle<SourceItem> upsertValue({int? id, required String value}) =>
       insertValue(id: id, value: value)
-          .onConflict(.primaryKey)
+          .onConflict(SourceItemConflict.primaryKey)
           .update((_, excluded, set) => set(value: excluded.value));
 
   /// Bulk insert rows into the `sourceItems` table.
@@ -580,8 +580,8 @@ final class _$SubQueryItem extends SubQueryItem {
         columns: ['refId'],
         referencedTable: 'sourceItems',
         referencedColumns: ['id'],
-        onDelete: .noAction,
-        onUpdate: .noAction,
+        onDelete: ReferentialAction.noAction,
+        onUpdate: ReferentialAction.noAction,
       ),
     ],
     indexes: [],
@@ -636,7 +636,7 @@ extension TableSubQueryItemExt on Table<SubQueryItem> {
     required Expr<int> refId,
     required Expr<int> count,
   }) => insert(id: id, tag: tag, refId: refId, count: count)
-      .onConflict(.primaryKey)
+      .onConflict(SubQueryItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           tag: excluded.tag,
@@ -675,7 +675,7 @@ extension TableSubQueryItemExt on Table<SubQueryItem> {
     required int refId,
     required int count,
   }) => insertValue(id: id, tag: tag, refId: refId, count: count)
-      .onConflict(.primaryKey)
+      .onConflict(SubQueryItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           tag: excluded.tag,

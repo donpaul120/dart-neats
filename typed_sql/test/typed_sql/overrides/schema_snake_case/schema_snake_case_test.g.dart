@@ -229,7 +229,7 @@ extension TableSnakeUserExt on Table<SnakeUser> {
             emailAddress: emailAddress,
             favoriteColor: favoriteColor,
           )
-          .onConflict(.primaryKey)
+          .onConflict(SnakeUserConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               firstName: excluded.firstName,
@@ -284,7 +284,7 @@ extension TableSnakeUserExt on Table<SnakeUser> {
             emailAddress: emailAddress,
             favoriteColor: favoriteColor,
           )
-          .onConflict(.primaryKey)
+          .onConflict(SnakeUserConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               firstName: excluded.firstName,
@@ -841,8 +841,8 @@ final class _$SnakeProfile extends SnakeProfile {
         columns: ['user_ref_id'],
         referencedTable: 'snake_users',
         referencedColumns: ['user_id'],
-        onDelete: .noAction,
-        onUpdate: .noAction,
+        onDelete: ReferentialAction.noAction,
+        onUpdate: ReferentialAction.noAction,
       ),
     ],
     indexes: [],
@@ -899,7 +899,7 @@ extension TableSnakeProfileExt on Table<SnakeProfile> {
             userRefId: userRefId,
             profileType: profileType,
           )
-          .onConflict(.primaryKey)
+          .onConflict(SnakeProfileConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               userRefId: excluded.userRefId,
@@ -940,7 +940,7 @@ extension TableSnakeProfileExt on Table<SnakeProfile> {
             userRefId: userRefId,
             profileType: profileType,
           )
-          .onConflict(.primaryKey)
+          .onConflict(SnakeProfileConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               userRefId: excluded.userRefId,

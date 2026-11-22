@@ -137,7 +137,7 @@ extension TableDepartmentExt on Table<Department> {
     Expr<int>? departmentId,
     required Expr<String> name,
   }) => insert(departmentId: departmentId, name: name)
-      .onConflict(.primaryKey)
+      .onConflict(DepartmentConflict.primaryKey)
       .update((_, excluded, set) => set(name: excluded.name));
 
   /// Insert row into the `departments` table.
@@ -166,7 +166,7 @@ extension TableDepartmentExt on Table<Department> {
     int? departmentId,
     required String name,
   }) => insertValue(departmentId: departmentId, name: name)
-      .onConflict(.primaryKey)
+      .onConflict(DepartmentConflict.primaryKey)
       .update((_, excluded, set) => set(name: excluded.name));
 
   /// Bulk insert rows into the `departments` table.
@@ -597,8 +597,8 @@ final class _$Employee extends Employee {
         columns: ['departmentId'],
         referencedTable: 'departments',
         referencedColumns: ['departmentId'],
-        onDelete: .noAction,
-        onUpdate: .noAction,
+        onDelete: ReferentialAction.noAction,
+        onUpdate: ReferentialAction.noAction,
       ),
     ],
     indexes: [],
@@ -650,7 +650,7 @@ extension TableEmployeeExt on Table<Employee> {
     required Expr<String> name,
     required Expr<int> departmentId,
   }) => insert(employeeId: employeeId, name: name, departmentId: departmentId)
-      .onConflict(.primaryKey)
+      .onConflict(EmployeeConflict.primaryKey)
       .update(
         (_, excluded, set) =>
             set(name: excluded.name, departmentId: excluded.departmentId),
@@ -689,7 +689,7 @@ extension TableEmployeeExt on Table<Employee> {
             name: name,
             departmentId: departmentId,
           )
-          .onConflict(.primaryKey)
+          .onConflict(EmployeeConflict.primaryKey)
           .update(
             (_, excluded, set) =>
                 set(name: excluded.name, departmentId: excluded.departmentId),
@@ -1159,8 +1159,8 @@ final class _$Project extends Project {
         columns: ['departmentId'],
         referencedTable: 'departments',
         referencedColumns: ['departmentId'],
-        onDelete: .noAction,
-        onUpdate: .noAction,
+        onDelete: ReferentialAction.noAction,
+        onUpdate: ReferentialAction.noAction,
       ),
     ],
     indexes: [],
@@ -1224,7 +1224,7 @@ extension TableProjectExt on Table<Project> {
             departmentId: departmentId,
             budget: budget,
           )
-          .onConflict(.primaryKey)
+          .onConflict(ProjectConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               name: excluded.name,
@@ -1274,7 +1274,7 @@ extension TableProjectExt on Table<Project> {
             departmentId: departmentId,
             budget: budget,
           )
-          .onConflict(.primaryKey)
+          .onConflict(ProjectConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               name: excluded.name,

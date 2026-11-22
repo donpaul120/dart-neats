@@ -221,7 +221,7 @@ extension TableHierarchyUserExt on Table<HierarchyUser> {
             emailAddress: emailAddress,
             userColor: userColor,
           )
-          .onConflict(.primaryKey)
+          .onConflict(HierarchyUserConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               firstName: excluded.firstName,
@@ -276,7 +276,7 @@ extension TableHierarchyUserExt on Table<HierarchyUser> {
             emailAddress: emailAddress,
             userColor: userColor,
           )
-          .onConflict(.primaryKey)
+          .onConflict(HierarchyUserConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               firstName: excluded.firstName,
@@ -835,8 +835,8 @@ final class _$HierarchyProfile extends HierarchyProfile {
         columns: ['user_ref_id'],
         referencedTable: 'tbl_users',
         referencedColumns: ['userId'],
-        onDelete: .noAction,
-        onUpdate: .noAction,
+        onDelete: ReferentialAction.noAction,
+        onUpdate: ReferentialAction.noAction,
       ),
     ],
     indexes: [],
@@ -893,7 +893,7 @@ extension TableHierarchyProfileExt on Table<HierarchyProfile> {
             userRefId: userRefId,
             profileType: profileType,
           )
-          .onConflict(.primaryKey)
+          .onConflict(HierarchyProfileConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               userRefId: excluded.userRefId,
@@ -934,7 +934,7 @@ extension TableHierarchyProfileExt on Table<HierarchyProfile> {
             userRefId: userRefId,
             profileType: profileType,
           )
-          .onConflict(.primaryKey)
+          .onConflict(HierarchyProfileConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               userRefId: excluded.userRefId,

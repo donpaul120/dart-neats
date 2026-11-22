@@ -119,7 +119,7 @@ extension TableJsonItemExt on Table<JsonItem> {
     Expr<int>? id,
     required Expr<JsonValue> data,
   }) => insert(id: id, data: data)
-      .onConflict(.primaryKey)
+      .onConflict(JsonItemConflict.primaryKey)
       .update((_, excluded, set) => set(data: excluded.data));
 
   /// Insert row into the `jsonItems` table.
@@ -144,7 +144,7 @@ extension TableJsonItemExt on Table<JsonItem> {
   /// called for the row to be inserted or updated.
   UpsertSingle<JsonItem> upsertValue({int? id, required JsonValue data}) =>
       insertValue(id: id, data: data)
-          .onConflict(.primaryKey)
+          .onConflict(JsonItemConflict.primaryKey)
           .update((_, excluded, set) => set(data: excluded.data));
 
   /// Bulk insert rows into the `jsonItems` table.

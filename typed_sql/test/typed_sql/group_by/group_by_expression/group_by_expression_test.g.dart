@@ -131,7 +131,7 @@ extension TableEmployeeExt on Table<Employee> {
     required Expr<String> surname,
     required Expr<int> salary,
   }) => insert(id: id, surname: surname, salary: salary)
-      .onConflict(.primaryKey)
+      .onConflict(EmployeeConflict.primaryKey)
       .update(
         (_, excluded, set) =>
             set(surname: excluded.surname, salary: excluded.salary),
@@ -165,7 +165,7 @@ extension TableEmployeeExt on Table<Employee> {
     required String surname,
     required int salary,
   }) => insertValue(id: id, surname: surname, salary: salary)
-      .onConflict(.primaryKey)
+      .onConflict(EmployeeConflict.primaryKey)
       .update(
         (_, excluded, set) =>
             set(surname: excluded.surname, salary: excluded.salary),

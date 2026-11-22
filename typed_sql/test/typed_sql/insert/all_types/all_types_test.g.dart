@@ -545,7 +545,7 @@ extension TableAllTypesItemExt on Table<AllTypesItem> {
             ddt: ddt,
             djson: djson,
           )
-          .onConflict(.primaryKey)
+          .onConflict(AllTypesItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               b: excluded.b,
@@ -690,7 +690,7 @@ extension TableAllTypesItemExt on Table<AllTypesItem> {
             ddt: ddt,
             djson: djson,
           )
-          .onConflict(.primaryKey)
+          .onConflict(AllTypesItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               b: excluded.b,

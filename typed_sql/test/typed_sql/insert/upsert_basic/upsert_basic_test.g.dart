@@ -138,7 +138,7 @@ extension TableBasicItemExt on Table<BasicItem> {
     required Expr<String> name,
     required Expr<int> value,
   }) => insert(id: id, name: name, value: value)
-      .onConflict(.primaryKey)
+      .onConflict(BasicItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(name: excluded.name, value: excluded.value),
       );
@@ -171,7 +171,7 @@ extension TableBasicItemExt on Table<BasicItem> {
     required String name,
     required int value,
   }) => insertValue(id: id, name: name, value: value)
-      .onConflict(.primaryKey)
+      .onConflict(BasicItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(name: excluded.name, value: excluded.value),
       );

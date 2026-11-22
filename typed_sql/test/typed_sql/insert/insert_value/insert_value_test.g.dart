@@ -116,7 +116,7 @@ extension TableValueItemExt on Table<ValueItem> {
     Expr<int>? id,
     required Expr<String> value,
   }) => insert(id: id, value: value)
-      .onConflict(.primaryKey)
+      .onConflict(ValueItemConflict.primaryKey)
       .update((_, excluded, set) => set(value: excluded.value));
 
   /// Insert row into the `valueItems` table.
@@ -141,7 +141,7 @@ extension TableValueItemExt on Table<ValueItem> {
   /// called for the row to be inserted or updated.
   UpsertSingle<ValueItem> upsertValue({int? id, required String value}) =>
       insertValue(id: id, value: value)
-          .onConflict(.primaryKey)
+          .onConflict(ValueItemConflict.primaryKey)
           .update((_, excluded, set) => set(value: excluded.value));
 
   /// Bulk insert rows into the `valueItems` table.

@@ -145,7 +145,7 @@ extension TableItemExt on Table<Item> {
     required Expr<JsonValue> data,
     required Expr<int> score,
   }) => insert(id: id, category: category, data: data, score: score)
-      .onConflict(.primaryKey)
+      .onConflict(ItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           category: excluded.category,
@@ -184,7 +184,7 @@ extension TableItemExt on Table<Item> {
     required JsonValue data,
     required int score,
   }) => insertValue(id: id, category: category, data: data, score: score)
-      .onConflict(.primaryKey)
+      .onConflict(ItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           category: excluded.category,

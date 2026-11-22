@@ -146,7 +146,7 @@ extension TableMappedItemExt on Table<MappedItem> {
     Expr<int>? count,
     Expr<String?>? nullableValue,
   }) => insert(id: id, value: value, count: count, nullableValue: nullableValue)
-      .onConflict(.primaryKey)
+      .onConflict(MappedItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           value: excluded.value,
@@ -191,7 +191,7 @@ extension TableMappedItemExt on Table<MappedItem> {
             count: count,
             nullableValue: nullableValue,
           )
-          .onConflict(.primaryKey)
+          .onConflict(MappedItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               value: excluded.value,

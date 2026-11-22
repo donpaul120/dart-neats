@@ -119,7 +119,7 @@ extension TableNotNullItemExt on Table<NotNullItem> {
     Expr<int>? id,
     required Expr<String> name,
   }) => insert(id: id, name: name)
-      .onConflict(.primaryKey)
+      .onConflict(NotNullItemConflict.primaryKey)
       .update((_, excluded, set) => set(name: excluded.name));
 
   /// Insert row into the `notNullItems` table.
@@ -144,7 +144,7 @@ extension TableNotNullItemExt on Table<NotNullItem> {
   /// called for the row to be inserted or updated.
   UpsertSingle<NotNullItem> upsertValue({int? id, required String name}) =>
       insertValue(id: id, name: name)
-          .onConflict(.primaryKey)
+          .onConflict(NotNullItemConflict.primaryKey)
           .update((_, excluded, set) => set(name: excluded.name));
 
   /// Bulk insert rows into the `notNullItems` table.

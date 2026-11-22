@@ -169,7 +169,7 @@ extension TableItemExt on Table<Item> {
             createdAt: createdAt,
             expires: expires,
           )
-          .onConflict(.primaryKey)
+          .onConflict(ItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               name: excluded.name,
@@ -224,7 +224,7 @@ extension TableItemExt on Table<Item> {
             createdAt: createdAt,
             expires: expires,
           )
-          .onConflict(.primaryKey)
+          .onConflict(ItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               name: excluded.name,

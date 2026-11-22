@@ -135,7 +135,7 @@ extension TableAuthorExt on Table<Author> {
     required Expr<String> firstname,
     required Expr<String> lastname,
   }) => insert(authorId: authorId, firstname: firstname, lastname: lastname)
-      .onConflict(.primaryKey)
+      .onConflict(AuthorConflict.primaryKey)
       .update(
         (_, excluded, set) =>
             set(firstname: excluded.firstname, lastname: excluded.lastname),
@@ -170,7 +170,7 @@ extension TableAuthorExt on Table<Author> {
     required String lastname,
   }) =>
       insertValue(authorId: authorId, firstname: firstname, lastname: lastname)
-          .onConflict(.primaryKey)
+          .onConflict(AuthorConflict.primaryKey)
           .update(
             (_, excluded, set) =>
                 set(firstname: excluded.firstname, lastname: excluded.lastname),
@@ -698,8 +698,8 @@ final class _$Book extends Book {
         columns: ['authorId'],
         referencedTable: 'authors',
         referencedColumns: ['authorId'],
-        onDelete: .noAction,
-        onUpdate: .noAction,
+        onDelete: ReferentialAction.noAction,
+        onUpdate: ReferentialAction.noAction,
       ),
     ],
     indexes: [],
@@ -754,7 +754,7 @@ extension TableBookExt on Table<Book> {
     Expr<int?>? authorId,
     required Expr<int> stock,
   }) => insert(bookId: bookId, title: title, authorId: authorId, stock: stock)
-      .onConflict(.primaryKey)
+      .onConflict(BookConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           title: excluded.title,
@@ -799,7 +799,7 @@ extension TableBookExt on Table<Book> {
             authorId: authorId,
             stock: stock,
           )
-          .onConflict(.primaryKey)
+          .onConflict(BookConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               title: excluded.title,

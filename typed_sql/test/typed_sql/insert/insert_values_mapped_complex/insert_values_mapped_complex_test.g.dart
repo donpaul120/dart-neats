@@ -206,7 +206,7 @@ extension TableComplexMappedItemExt on Table<ComplexMappedItem> {
     Expr<JsonValue?>? json,
   }) =>
       insert(id: id, s: s, dt: dt, blob: blob, custom: custom, i: i, json: json)
-          .onConflict(.primaryKey)
+          .onConflict(ComplexMappedItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               s: excluded.s,
@@ -271,7 +271,7 @@ extension TableComplexMappedItemExt on Table<ComplexMappedItem> {
             i: i,
             json: json,
           )
-          .onConflict(.primaryKey)
+          .onConflict(ComplexMappedItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               s: excluded.s,

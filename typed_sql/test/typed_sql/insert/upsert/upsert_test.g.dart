@@ -160,7 +160,7 @@ extension TableSimpleItemExt on Table<SimpleItem> {
     required Expr<String> name,
     required Expr<int> value,
   }) => insert(id: id, name: name, value: value)
-      .onConflict(.primaryKey)
+      .onConflict(SimpleItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(name: excluded.name, value: excluded.value),
       );
@@ -193,7 +193,7 @@ extension TableSimpleItemExt on Table<SimpleItem> {
     required String name,
     required int value,
   }) => insertValue(id: id, name: name, value: value)
-      .onConflict(.primaryKey)
+      .onConflict(SimpleItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(name: excluded.name, value: excluded.value),
       );
@@ -765,7 +765,7 @@ extension TableCompositeItemExt on Table<CompositeItem> {
             lastName: lastName,
             data: data,
           )
-          .onConflict(.primaryKey)
+          .onConflict(CompositeItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               firstName: excluded.firstName,
@@ -819,7 +819,7 @@ extension TableCompositeItemExt on Table<CompositeItem> {
             lastName: lastName,
             data: data,
           )
-          .onConflict(.primaryKey)
+          .onConflict(CompositeItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               firstName: excluded.firstName,
@@ -1417,7 +1417,7 @@ extension TableNullableUniqueItemExt on Table<NullableUniqueItem> {
     Expr<String?>? code,
     required Expr<String> description,
   }) => insert(id: id, code: code, description: description)
-      .onConflict(.primaryKey)
+      .onConflict(NullableUniqueItemConflict.primaryKey)
       .update(
         (_, excluded, set) =>
             set(code: excluded.code, description: excluded.description),
@@ -1451,7 +1451,7 @@ extension TableNullableUniqueItemExt on Table<NullableUniqueItem> {
     String? code,
     required String description,
   }) => insertValue(id: id, code: code, description: description)
-      .onConflict(.primaryKey)
+      .onConflict(NullableUniqueItemConflict.primaryKey)
       .update(
         (_, excluded, set) =>
             set(code: excluded.code, description: excluded.description),
@@ -1956,8 +1956,8 @@ final class _$SubQueryItem extends SubQueryItem {
         columns: ['refId'],
         referencedTable: 'simpleItems',
         referencedColumns: ['id'],
-        onDelete: .noAction,
-        onUpdate: .noAction,
+        onDelete: ReferentialAction.noAction,
+        onUpdate: ReferentialAction.noAction,
       ),
     ],
     indexes: [],
@@ -2012,7 +2012,7 @@ extension TableSubQueryItemExt on Table<SubQueryItem> {
     required Expr<int> refId,
     required Expr<int> count,
   }) => insert(id: id, tag: tag, refId: refId, count: count)
-      .onConflict(.primaryKey)
+      .onConflict(SubQueryItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           tag: excluded.tag,
@@ -2051,7 +2051,7 @@ extension TableSubQueryItemExt on Table<SubQueryItem> {
     required int refId,
     required int count,
   }) => insertValue(id: id, tag: tag, refId: refId, count: count)
-      .onConflict(.primaryKey)
+      .onConflict(SubQueryItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           tag: excluded.tag,
@@ -2675,7 +2675,7 @@ extension TableComplexItemExt on Table<ComplexItem> {
             boolValue: boolValue,
             value: value,
           )
-          .onConflict(.primaryKey)
+          .onConflict(ComplexItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               name: excluded.name,
@@ -2734,7 +2734,7 @@ extension TableComplexItemExt on Table<ComplexItem> {
             boolValue: boolValue,
             value: value,
           )
-          .onConflict(.primaryKey)
+          .onConflict(ComplexItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               name: excluded.name,
@@ -3332,7 +3332,7 @@ extension TableCustomTypeItemExt on Table<CustomTypeItem> {
     Expr<int>? id,
     required Expr<MyCustomType> value,
   }) => insert(id: id, value: value)
-      .onConflict(.primaryKey)
+      .onConflict(CustomTypeItemConflict.primaryKey)
       .update((_, excluded, set) => set(value: excluded.value));
 
   /// Insert row into the `customTypeItems` table.
@@ -3361,7 +3361,7 @@ extension TableCustomTypeItemExt on Table<CustomTypeItem> {
     int? id,
     required MyCustomType value,
   }) => insertValue(id: id, value: value)
-      .onConflict(.primaryKey)
+      .onConflict(CustomTypeItemConflict.primaryKey)
       .update((_, excluded, set) => set(value: excluded.value));
 
   /// Bulk insert rows into the `customTypeItems` table.

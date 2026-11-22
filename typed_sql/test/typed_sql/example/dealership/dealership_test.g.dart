@@ -157,7 +157,7 @@ extension TableCarExt on Table<Car> {
     required Expr<String> licensePlate,
     required Expr<Color> color,
   }) => insert(id: id, model: model, licensePlate: licensePlate, color: color)
-      .onConflict(.primaryKey)
+      .onConflict(CarConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           model: excluded.model,
@@ -202,7 +202,7 @@ extension TableCarExt on Table<Car> {
             licensePlate: licensePlate,
             color: color,
           )
-          .onConflict(.primaryKey)
+          .onConflict(CarConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               model: excluded.model,

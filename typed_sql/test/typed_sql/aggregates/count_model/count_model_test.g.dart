@@ -169,7 +169,7 @@ extension TableItemExt on Table<Item> {
             timestamp: timestamp,
             integer: integer,
           )
-          .onConflict(.primaryKey)
+          .onConflict(ItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               text: excluded.text,
@@ -224,7 +224,7 @@ extension TableItemExt on Table<Item> {
             timestamp: timestamp,
             integer: integer,
           )
-          .onConflict(.primaryKey)
+          .onConflict(ItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               text: excluded.text,

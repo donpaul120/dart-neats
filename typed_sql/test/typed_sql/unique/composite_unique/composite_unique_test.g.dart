@@ -151,7 +151,7 @@ extension TableUserExt on Table<User> {
     required Expr<String> firstName,
     required Expr<String> lastName,
   }) => insert(accountId: accountId, firstName: firstName, lastName: lastName)
-      .onConflict(.primaryKey)
+      .onConflict(UserConflict.primaryKey)
       .update(
         (_, excluded, set) =>
             set(firstName: excluded.firstName, lastName: excluded.lastName),
@@ -190,7 +190,7 @@ extension TableUserExt on Table<User> {
             firstName: firstName,
             lastName: lastName,
           )
-          .onConflict(.primaryKey)
+          .onConflict(UserConflict.primaryKey)
           .update(
             (_, excluded, set) =>
                 set(firstName: excluded.firstName, lastName: excluded.lastName),

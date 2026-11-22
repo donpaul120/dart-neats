@@ -307,7 +307,7 @@ extension TableItemExt on Table<Item> {
             optTimestamp: optTimestamp,
             optJson: optJson,
           )
-          .onConflict(.primaryKey)
+          .onConflict(ItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               text: excluded.text,
@@ -392,7 +392,7 @@ extension TableItemExt on Table<Item> {
             optTimestamp: optTimestamp,
             optJson: optJson,
           )
-          .onConflict(.primaryKey)
+          .onConflict(ItemConflict.primaryKey)
           .update(
             (_, excluded, set) => set(
               text: excluded.text,

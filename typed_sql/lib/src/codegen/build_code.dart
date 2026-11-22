@@ -423,8 +423,8 @@ Iterable<Spec> buildTable(ParsedTable table, ParsedSchema schema) sync* {
                     columns: [${fk.foreignKey.map((f) => '\'${f.sqlName}\'').join(', ')}],
                     referencedTable: '${fk.referencedTable.sqlName}',
                     referencedColumns: [${fk.referencedFields.map((f) => '\'${f.sqlName}\'').join(', ')}],
-                    onDelete: .${fk.onDelete.name},
-                    onUpdate: .${fk.onUpdate.name},
+                    onDelete: ReferentialAction.${fk.onDelete.name},
+                    onUpdate: ReferentialAction.${fk.onUpdate.name},
                   )
                 ''').join(',')}
               ],
@@ -609,7 +609,7 @@ Iterable<Spec> buildTable(ParsedTable table, ParsedSchema schema) sync* {
             ..body = Code('''
               insert(
                 ${rowClass.fields.map((field) => '${field.name}: ${field.name}').join(', ')},
-              ).onConflict(.primaryKey).update(
+              ).onConflict(${rowClassName}Conflict.primaryKey).update(
                 (_, excluded, set) => set(${nonPrimaryKeyFields.map((f) => '${f.name}: excluded.${f.name}').join(', ')}),
               )
             '''),
@@ -678,7 +678,7 @@ Iterable<Spec> buildTable(ParsedTable table, ParsedSchema schema) sync* {
             ..body = Code('''
               insertValue(
                 ${rowClass.fields.map((field) => '${field.name}: ${field.name}').join(', ')},
-              ).onConflict(.primaryKey).update(
+              ).onConflict(${rowClassName}Conflict.primaryKey).update(
                 (_, excluded, set) => set(${nonPrimaryKeyFields.map((f) => '${f.name}: excluded.${f.name}').join(', ')}),
               )
             '''),

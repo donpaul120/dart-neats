@@ -152,7 +152,7 @@ extension TableUpsertExprItemExt on Table<UpsertExprItem> {
     required Expr<int> value,
     Expr<String>? note,
   }) => insert(id: id, name: name, value: value, note: note)
-      .onConflict(.primaryKey)
+      .onConflict(UpsertExprItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           name: excluded.name,
@@ -191,7 +191,7 @@ extension TableUpsertExprItemExt on Table<UpsertExprItem> {
     required int value,
     String? note,
   }) => insertValue(id: id, name: name, value: value, note: note)
-      .onConflict(.primaryKey)
+      .onConflict(UpsertExprItemConflict.primaryKey)
       .update(
         (_, excluded, set) => set(
           name: excluded.name,
@@ -713,10 +713,9 @@ extension TableUpsertExprLinkExt on Table<UpsertExprLink> {
   UpsertSingle<UpsertExprLink> upsert({
     required Expr<int> a,
     required Expr<int> b,
-  }) => insert(
-    a: a,
-    b: b,
-  ).onConflict(.primaryKey).update((_, excluded, set) => set());
+  }) => insert(a: a, b: b)
+      .onConflict(UpsertExprLinkConflict.primaryKey)
+      .update((_, excluded, set) => set());
 
   /// Insert row into the `links` table.
   ///
@@ -736,10 +735,9 @@ extension TableUpsertExprLinkExt on Table<UpsertExprLink> {
   /// Returns an [UpsertSingle] statement on which `.execute()` must be
   /// called for the row to be inserted or updated.
   UpsertSingle<UpsertExprLink> upsertValue({required int a, required int b}) =>
-      insertValue(
-        a: a,
-        b: b,
-      ).onConflict(.primaryKey).update((_, excluded, set) => set());
+      insertValue(a: a, b: b)
+          .onConflict(UpsertExprLinkConflict.primaryKey)
+          .update((_, excluded, set) => set());
 
   /// Bulk insert rows into the `links` table.
   ///
